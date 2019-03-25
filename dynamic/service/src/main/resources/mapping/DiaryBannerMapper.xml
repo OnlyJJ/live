@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.jiujun.shows.dynamic.dao.DiaryBannerMapper">
+	<resultMap type="com.jiujun.shows.dynamic.domain.banner.DiaryBanner"  id="vo">
+		<id property="id" column="id" />
+		<result property="title" column="title" />
+		<result property="titleColor" column="titleColor" />
+		<result property="linkUrl" column="linkUrl" />
+		<result property="showImgUrl" column="showImgUrl" />
+		<result property="isUse" column="isUse" />
+		<result property="addTime" column="addTime" />
+		<result property="beginTime" column="beginTime" />
+		<result property="endTime" column="endTime" />
+		<result property="appShowImgUrl" column="appShowImgUrl" />
+		<result property="showSort" column="showSort" />
+	</resultMap>
+
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id
+		 ,title
+		 ,titleColor
+		 ,linkUrl
+		 ,showImgUrl
+		 ,isUse
+		 ,addTime
+		 ,beginTime
+		 ,endTime
+		 ,appShowImgUrl
+		 ,showSort
+	</sql>
+	
+	<select id="getObjectById" parameterType="java.lang.Long" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_diary_banner
+		WHERE id= #{id}
+	</select>	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_diary_banner
+				(title
+				,titleColor
+				,linkUrl
+				,showImgUrl
+				,isUse
+				,addTime
+				,beginTime
+				,endTime
+				,appShowImgUrl
+				,showSort
+				)
+		VALUES	(#{title}
+				,#{titleColor}
+				,#{linkUrl}
+				,#{showImgUrl}
+				,#{isUse}
+				,#{addTime}
+				,#{beginTime}
+				,#{endTime}
+				,#{appShowImgUrl}
+				,#{showSort}
+				)
+	</insert>
+	
+	<update id="update">
+		UPDATE	t_diary_banner
+		<set>
+			<if test="id != null and id != ''">
+				id = #{id},
+			</if>
+			<if test="title != null and title != ''">
+				title = #{title},
+			</if>
+			<if test="titleColor != null and titleColor != ''">
+				titleColor = #{titleColor},
+			</if>
+			<if test="linkUrl != null and linkUrl != ''">
+				linkUrl = #{linkUrl},
+			</if>
+			<if test="showImgUrl != null and showImgUrl != ''">
+				showImgUrl = #{showImgUrl},
+			</if>
+			<if test="isUse != null and isUse != ''">
+				isUse = #{isUse},
+			</if>
+			<if test="confTime != null and confTime != ''">
+				confTime = #{confTime},
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				beginTime = #{beginTime},
+			</if>
+			<if test="endTime != null and endTime != ''">
+				endTime = #{endTime},
+			</if>
+			<if test="appShowImgUrl != null and appShowImgUrl != ''">
+				appShowImgUrl = #{appShowImgUrl},
+			</if>
+			<if test="endTime != null and endTime != ''">
+				showSort = #{showSort},
+			</if>
+		</set>
+		WHERE	id = #{id}
+		  
+	</update>
+	
+	<delete id="removeById" parameterType="java.lang.Long">
+		DELETE FROM t_diary_banner
+		WHERE id = #{id}
+	</delete>
+	
+	<select id="getDiaryBannerList" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_diary_banner
+		WHERE isUse =1
+	</select>	
+	
+</mapper> 

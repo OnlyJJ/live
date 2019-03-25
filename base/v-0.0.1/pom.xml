@@ -1,0 +1,382 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.jiujun.shows</groupId>
+	<artifactId>shows-parent</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>Parent Center</name>
+
+	<!-- 聚合 -->
+	<modules>
+		<module>framework</module>
+	</modules>
+
+	<!-- 发布到nexus对应的仓库 -->
+	<distributionManagement>
+		<repository>
+			<id>myapp-release</id>
+			<name>Myapp Project Release</name>
+			<url>http://localhost:8081/nexus/content/repositories/myapp-release/</url>
+		</repository>
+		<snapshotRepository>
+			<id>myapp-snapshot</id>
+			<name>Myapp Project SNAPSHOTS</name>
+			<url>http://localhost:8081/nexus/content/repositories/myapp-snapshot/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<!-- 定义版本 -->
+	<properties>
+		<!-- 项目版本，须在此定义，不能在子项目中单独定义 -->
+		<shows.framework.version>1.0.0-SNAPSHOT</shows.framework.version>
+		<!-- 服务化模块，begin -->
+		<!-- 基础服务 -->
+		<shows.base.version>1.0.0-SNAPSHOT</shows.base.version>
+		<!-- 公共模块 -->
+		<shows.common.version>1.0.0-SNAPSHOT</shows.common.version>
+		<!-- 公共配置 -->
+		<shows.common.config.version>1.0.0-SNAPSHOT</shows.common.config.version>
+		<!-- 首页 -->
+		<shows.home.version>1.0.0-SNAPSHOT</shows.home.version>
+		<!-- 用户服务 -->
+		<shows.userinfo.version>1.0.0-SNAPSHOT</shows.userinfo.version>
+		<!-- 用户基本信息 -->
+		<shows.baseuserinfo.version>1.0.0-SNAPSHOT</shows.baseuserinfo.version>
+		<!-- 用户账户 -->
+		<shows.account.version>1.0.0-SNAPSHOT</shows.account.version>
+		<!-- 守护 -->
+		<shows.guard.version>1.0.0-SNAPSHOT</shows.guard.version>
+		<!-- 勋章 -->
+		<shows.decorate.version>1.0.0-SNAPSHOT</shows.decorate.version>
+		<!-- 座驾 -->
+		<shows.car.version>1.0.0-SNAPSHOT</shows.car.version>
+		<!-- 动态 -->
+		<shows.dynamic.version>1.0.0-SNAPSHOT</shows.dynamic.version>
+		<!-- 支付 -->
+		<shows.pay.version>1.0.0-SNAPSHOT</shows.pay.version>
+		<!-- 房间 -->
+		<shows.room.version>1.0.0-SNAPSHOT</shows.room.version>
+		<!-- 活动 -->
+		<shows.activity.version>1.0.0-SNAPSHOT</shows.activity.version>
+		<!-- 游戏 -->
+		<shows.game.version>1.0.0-SNAPSHOT</shows.game.version>
+		<!-- 道具 -->
+		<shows.tools.version>1.0.0-SNAPSHOT</shows.tools.version>
+		<!-- 榜单 -->
+		<shows.rank.version>1.0.0-SNAPSHOT</shows.rank.version>
+		<!-- app客户端 -->
+		<shows.appclient.version>1.0.0-SNAPSHOT</shows.appclient.version>
+		<!-- 其他 -->
+		<shows.others.version>1.0.0-SNAPSHOT</shows.others.version>
+		<!-- web接口入口控制器 -->
+		<shows.web.version>1.0.0-SNAPSHOT</shows.web.version>
+		<!-- 服务化模块，end! -->
+
+
+		<!-- 其他依赖构建 -->
+		<aspectjweaver.version>1.8.10</aspectjweaver.version>
+		<activemq.version>5.9.0</activemq.version>
+		<commons-fileupload.version>1.3.1</commons-fileupload.version>
+		<commons-io.version>2.4</commons-io.version>
+		<commons-codec.version>1.10</commons-codec.version>
+		<commons.httpclient.version>3.1</commons.httpclient.version>
+		<dubbo.version>2.5.3</dubbo.version>
+		<druid.version>1.0.31</druid.version>
+		<spring.version>4.2.5.RELEASE</spring.version>
+		<fastjson.version>1.2.33</fastjson.version>
+		<jedis.version>2.9.0</jedis.version>
+		<javax.version>7.0</javax.version>
+		<jackson.version>2.8.1</jackson.version>
+		<jstl.version>1.2</jstl.version>
+		<kryo.version>4.0.1</kryo.version>
+		<log4j.version>1.2.17</log4j.version>
+		<mybatis-spring.version>1.3.0</mybatis-spring.version>
+		<mysql.version>5.1.42</mysql.version>
+		<mybatis.version>3.4.0</mybatis.version>
+		<netty.version>3.2.9.Final</netty.version>
+		<slf4j.version>1.7.12</slf4j.version>
+		<!-- 腾讯信鸽推送 -->
+		<xinge.version>1.1.8</xinge.version>
+		<zookeeper.version>3.4.9</zookeeper.version>
+		<zkclient.version>0.6</zkclient.version>
+		<!-- redisson 依赖io-netty -->
+		<redisson.version>2.10.1</redisson.version>
+	</properties>
+
+
+	<!-- 可继承的依赖 -->
+	<dependencyManagement>
+		<!-- 构件依赖 -->
+		<dependencies>
+			<dependency>
+				<groupId>javax</groupId>
+				<artifactId>javaee-api</artifactId>
+				<version>${javax.version}</version>
+			</dependency>
+			<!-- spring框架包 start -->
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-core</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-oxm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-tx</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-jdbc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-aop</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context-support</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-expression</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-orm</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-web</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-webmvc</artifactId>
+				<version>${spring.version}</version>
+			</dependency>
+			<!-- spring框架包 end -->
+			<!-- mybatis -->
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis</artifactId>
+				<version>${mybatis.version}</version>
+			</dependency>
+			<!-- mybatis与spring整合所需的构件 -->
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis-spring</artifactId>
+				<version>${mybatis-spring.version}</version>
+			</dependency>
+			<!-- mysql驱动包 -->
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>${mysql.version}</version>
+			</dependency>
+			<!-- druid数据源 -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>druid</artifactId>
+				<version>${druid.version}</version>
+			</dependency>
+			<!-- log start -->
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j.version}</version>
+			</dependency>
+			<!-- log END -->
+			<!-- Json 注：1.2.28版本前，存在反序列化高危漏洞 -->
+			<!-- 格式化对象，方便输出日志 -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>${fastjson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.codehaus.jackson</groupId>
+				<artifactId>jackson-mapper-asl</artifactId>
+				<version>1.9.13</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-core</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>${jackson.version}</version>
+			</dependency>
+			<!-- 上传组件包 start -->
+			<dependency>
+				<groupId>commons-fileupload</groupId>
+				<artifactId>commons-fileupload</artifactId>
+				<version>${commons-fileupload.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-io</groupId>
+				<artifactId>commons-io</artifactId>
+				<version>${commons-io.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>${commons-codec.version}</version>
+			</dependency>
+			<!-- 上传组件包 end -->
+
+			<dependency>
+				<groupId>commons-httpclient</groupId>
+				<artifactId>commons-httpclient</artifactId>
+				<version>${commons.httpclient.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.aspectj</groupId>
+				<artifactId>aspectjweaver</artifactId>
+				<version>${aspectjweaver.version}</version>
+			</dependency>
+			<!-- dubbo -->
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>dubbo</artifactId>
+				<version>${dubbo.version}</version>
+				<!-- 去除依赖 -->
+				<exclusions>
+					<exclusion>
+						<artifactId>spring</artifactId>
+						<groupId>org.springframework</groupId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.zookeeper</groupId>
+				<artifactId>zookeeper</artifactId>
+				<version>${zookeeper.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.101tec</groupId>
+				<artifactId>zkclient</artifactId>
+				<version>${zkclient.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jboss.netty</groupId>
+				<artifactId>netty</artifactId>
+				<version>${netty.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-all</artifactId>
+				<version>${activemq.version}</version>
+			</dependency>
+			<!-- 缓存 -->
+			<dependency>
+				<groupId>redis.clients</groupId>
+				<artifactId>jedis</artifactId>
+				<version>${jedis.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>jstl</groupId>
+				<artifactId>jstl</artifactId>
+				<version>${jstl.version}</version>
+			</dependency>
+
+			<!-- kryo序列化 begin -->
+			<dependency>
+				<groupId>com.esotericsoftware</groupId>
+				<artifactId>kryo-shaded</artifactId>
+				<version>${kryo.version}</version>
+			</dependency>
+			<!-- kryo序列化 end -->
+
+			<dependency>
+				<groupId>dom4j</groupId>
+				<artifactId>dom4j</artifactId>
+				<version>1.6.1</version>
+			</dependency>
+
+			<!-- 第三方-易联支付 begin -->
+			<dependency>
+				<groupId>com.payeco</groupId>
+				<artifactId>com-pay-eco</artifactId>
+				<version>1.0.0</version>
+			</dependency>
+			<!-- 第三方-易联支付 end! -->
+
+			<!-- email -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-email</artifactId>
+				<version>1.2</version>
+			</dependency>
+
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.6</version>
+			</dependency>
+
+			<dependency>
+				<groupId>net.sf.json-lib</groupId>
+				<artifactId>json-lib</artifactId>
+				<version>2.4</version>
+				<classifier>jdk15</classifier>
+			</dependency>
+
+			<dependency>
+				<groupId>org.redisson</groupId>
+				<artifactId>redisson</artifactId>
+				<version>${redisson.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<!-- 支持jdk1.7 -->
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.6.1</version>
+				<configuration>
+					<source>1.7</source>
+					<target>1.7</target>
+				</configuration>
+			</plugin>
+		</plugins>
+		<finalName>shows parent</finalName>
+	</build>
+</project>

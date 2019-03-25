@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.jiujun.shows.dynamic.dao.DiaryCommentAccusationMapper">
+	<resultMap type="com.jiujun.shows.dynamic.domain.user.DiaryCommentAccusation"  id="vo">
+		<id property="id" column="id" />
+		<result property="userId" column="userId" />
+		<result property="toUserId" column="toUserId" />
+		<result property="accusationTime" column="accusationTime" />
+		<result property="commentId" column="commentId" />
+		<result property="accusationInfo" column="accusationInfo" />
+		<result property="mgrState" column="mgrState" />
+		<result property="operateUserId" column="operateUserId" />
+		<result property="operateTime" column="operateTime" />
+		<result property="operateComment" column="operateComment" />
+	</resultMap>
+
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id
+		 ,userId
+		 ,toUserId
+		 ,accusationTime
+		 ,commentId
+		 ,accusationInfo
+		 ,mgrState
+		 ,operateUserId
+		 ,operateTime
+		 ,operateComment
+	</sql>
+	
+	<select id="getObjectById" parameterType="java.lang.Long" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_diary_comment_accusation
+		WHERE id= #{id}
+	</select>	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_diary_comment_accusation
+				(userId
+				,toUserId
+				,accusationTime
+				,commentId
+				,accusationInfo
+				,mgrState
+				,operateUserId
+				,operateTime
+				,operateComment
+				)
+		VALUES	(#{userId}
+				,#{toUserId}
+				,#{accusationTime}
+				,#{commentId}
+				,#{accusationInfo}
+				,#{mgrState}
+				,#{operateUserId}
+				,#{operateTime}
+				,#{operateComment}
+				)
+	</insert>
+	
+	<update id="update">
+		UPDATE	t_diary_comment_accusation
+		<set>
+			<if test="userId != null and userId != ''">
+				userId = #{userId},
+			</if>
+			<if test="toUserId != null and toUserId != ''">
+				toUserId = #{toUserId},
+			</if>
+			<if test="accusationTime != null and accusationTime != ''">
+				accusationTime = #{accusationTime},
+			</if>
+			<if test="commentId != null and commentId != ''">
+				commentId = #{commentId},
+			</if>
+			<if test="accusationInfo != null and accusationInfo != ''">
+				accusationInfo = #{accusationInfo},
+			</if>
+			<if test="mgrState != null and mgrState != ''">
+				mgrState = #{mgrState},
+			</if>
+			<if test="operateUserId != null and operateUserId != ''">
+				operateUserId = #{operateUserId},
+			</if>
+			<if test="operateTime != null and operateTime != ''">
+				operateTime = #{operateTime},
+			</if>
+			<if test="operateComment != null and operateComment != ''">
+				operateComment = #{operateComment},
+			</if>
+		</set>
+		WHERE	id = #{id}
+		  
+	</update>
+	
+	<delete id="removeById" parameterType="java.lang.Long">
+		DELETE FROM t_diary_comment_accusation
+		WHERE id = #{id}
+	</delete>
+	
+	
+</mapper> 

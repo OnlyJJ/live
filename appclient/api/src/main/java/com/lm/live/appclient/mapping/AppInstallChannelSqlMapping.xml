@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.lm.live.appclient.domain.sqlmapping.AppInstallChannel">
+	<resultMap type="com.lm.live.appclient.domain.AppInstallChannelDo" id="appInstallChannelDo">
+	    <result property="id" column="id"/>
+		<result property="channelId" column="channelId"/>
+		<result property="appPackage" column="appPackage"/>
+		<result property="mac" column="mac"/>
+		<result property="uuid" column="uuid"/>
+		<result property="appType" column="appType"/>
+		<result property="recordTime" column="recordTime"/>
+		<result property="phoneModel" column="phoneModel"/>
+	</resultMap>
+
+ 	<insert id="insert"  keyProperty="recordDateTime">
+	  <![CDATA[
+	  INSERT INTO t_app_install_channel(
+			channelId,
+			recordTime,
+			mac,
+			appPackage,
+			appType,
+			uuid,
+			phoneModel
+		) VALUES (
+				#{channelId},
+				#{recordTime},
+				#{mac},
+				#{appPackage},
+				#{appType},
+				#{uuid},
+				#{phoneModel}
+		  )	
+		]]>
+	  </insert>
+	  
+	  <select id="getByMacImei" resultMap="appInstallChannelDo">
+		SELECT a.*
+		FROM t_app_install_channel a  
+		where 1=1
+		<if test="uuid != null and uuid != ''">
+			and a.uuid = #{uuid}
+		</if> 	
+		<if test="mac != null and mac != ''">
+			and a.mac=  #{mac}
+		</if> 	
+	</select>
+	
+	 <select id="getByImei" resultMap="appInstallChannelDo">
+		SELECT a.*
+		FROM t_app_install_channel a  
+		where 1=1
+		<if test="uuid != null and uuid != ''">
+			and a.uuid = #{uuid}
+		</if> 	
+		limit 1
+	</select>	
+</mapper>

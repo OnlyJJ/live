@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.jiujun.shows.dynamic.dao.DiaryCommentMapper">
+	<resultMap type="com.jiujun.shows.dynamic.domain.user.DiaryComment"  id="vo">
+		<id property="id" column="id" />
+		<result property="userId" column="userId" />
+		<result property="diaryInfoId" column="diaryInfoId" />
+		<result property="commentType" column="commentType" />
+		<result property="diaryCommentId" column="diaryCommentId" />
+		<result property="commentTime" column="commentTime" />
+		<result property="commentTextInfo" column="commentTextInfo" />
+		<result property="ip" column="ip" />
+		<result property="clientType" column="clientType" />
+		<result property="isUserCancel" column="isUserCancel" />
+		<result property="mgrState" column="mgrState" />
+		<result property="toUserId" column="toUserId" />
+		<result property="readFlag" column="readFlag" />
+		<!--  
+		<result property="prizeTotalNum" column="prizeTotalNum" />
+		<result property="belittleTotalNum" column="belittleTotalNum" />
+		-->
+	</resultMap>
+
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id
+		 ,userId
+		 ,diaryInfoId
+		 ,commentType
+		 ,diaryCommentId
+		 ,commentTime
+		 ,commentTextInfo
+		 ,ip
+		 ,clientType
+		 ,isUserCancel
+		 ,mgrState
+		 ,toUserId
+		 ,readFlag
+		 <!-- 
+		 ,prizeTotalNum
+		 ,belittleTotalNum
+		  -->
+	</sql>
+	
+	<select id="getObjectById" parameterType="java.lang.Long" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_diary_comment
+		WHERE id=#{id}
+	</select>	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_diary_comment
+				(userId
+				,diaryInfoId
+				,commentType
+				,diaryCommentId
+				,commentTime
+				,commentTextInfo
+				,ip
+				,clientType
+				,isUserCancel
+				,mgrState
+				,toUserId
+				,readFlag
+				)
+		VALUES	(#{userId}
+				,#{diaryInfoId}
+				,#{commentType}
+				,#{diaryCommentId}
+				,#{commentTime}
+				,#{commentTextInfo}
+				,#{ip}
+				,#{clientType}
+				,#{isUserCancel}
+				,#{mgrState}
+				,#{toUserId}
+				,#{readFlag}
+				)
+	</insert>
+	
+	<update id="update">
+		UPDATE	t_diary_comment
+		<set>
+			<if test="userId != null and userId != ''">
+				<![CDATA[userId = #{userId},  ]]>
+			</if>
+			<if test="diaryInfoId != null">
+				<![CDATA[diaryInfoId = #{diaryInfoId},]]>
+			</if>
+			<if test="commentType != null">
+				<![CDATA[commentType = #{commentType},]]>
+			</if>
+			<if test="diaryCommentId != null">
+				<![CDATA[diaryCommentId = #{diaryCommentId},]]>
+			</if>
+			<if test="commentTime != null">
+				<![CDATA[commentTime = #{commentTime},]]>
+			</if>
+			<if test="commentTextInfo != null and commentTextInfo != ''">
+				<![CDATA[commentTextInfo = #{commentTextInfo},]]>
+			</if>
+			<if test="ip != null and ip != ''">
+				<![CDATA[ip = #{ip},]]>
+			</if>
+			<if test="clientType != null and clientType != ''">
+				<![CDATA[clientType = #{clientType},]]>
+			</if>
+			<if test="isUserCancel != null and isUserCancel != ''">
+				<![CDATA[isUserCancel = #{isUserCancel},]]>
+			</if>
+			<if test="mgrState != null">
+				<![CDATA[mgrState = #{mgrState},]]>
+			</if>
+			<if test="toUserId != null and toUserId != ''">
+				<![CDATA[toUserId = #{toUserId},]]>
+			</if>
+			<if test="readFlag != null">
+				<![CDATA[readFlag = #{readFlag},]]>
+			</if>
+			
+		</set>
+		<where>
+			 <![CDATA[ and id = #{id} ]]>  			  	
+		</where>  
+		  
+	</update>
+	
+	<delete id="removeById" parameterType="java.lang.Long">
+		DELETE FROM t_diary_comment
+		WHERE id = #{id}
+	</delete>
+	
+	<select id="getDiaryCommentByDiaryInfoId" resultMap="vo">
+		SELECT <include refid="base_column" />
+		FROM t_diary_comment
+		WHERE diaryInfoId = #{diaryInfoId}
+		AND isUserCancel = 0
+		AND mgrState != 1
+		ORDER BY commentTime ASC
+	</select>
+	
+	<select id="findAllReCommentByTouser" resultMap="vo">
+		SELECT <include refid="base_column" />
+		FROM t_diary_comment
+		WHERE 1=1 
+		AND diaryInfoId = #{diaryInfoId}
+		AND toUserId=#{toUserId}
+	</select>
+	
+	<select id="getUserCommentedByToUserId" resultMap="vo">
+		SELECT <include refid="base_column" />
+		FROM t_diary_comment
+		WHERE toUserId=#{toUserId}
+		<!-- 排除标记被清空的，取已读和未读所有 -->
+		AND readFlag != 2
+		AND isUserCancel = 0
+		AND mgrState != 1
+		ORDER BY commentTime ASC
+	</select>
+	
+</mapper> 

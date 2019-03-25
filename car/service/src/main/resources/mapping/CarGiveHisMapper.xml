@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.car.dao.CarGiveHisMapper">
+	<resultMap type="com.jiujun.shows.car.domain.CarGiveHisDo" id="vo">
+	    <result property="id" column="id" />
+	    <result property="carId" column="carId" />
+	    <result property="sendUserId" column="sendUserId" />
+	    <result property="receiveUserId" column="receiveUserId" />
+	    <result property="num" column="num" />
+	    <result property="recordDate" column="recordDate" />
+	    <result property="comment" column="comment" />
+	    <result property="type" column="type" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_car_give_his where id=#{id}
+	</select>
+	
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from t_car_give_his where id = #{id}
+	</delete>
+	
+	<delete id="removeByIds" >
+		delete from t_car_give_his where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>	
+	
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_car_give_his where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>	
+
+	<select id="getListByPage"  resultMap="vo">
+		select * from t_car_give_his 
+	<where>
+		<if test="carId != null">
+			AND carId = #{carId}
+		</if>	
+	 	<if test="sendUserId != null and sendUserId != ''">
+			AND sendUserId like '%${sendUserId}%'
+		</if> 	
+		<if test="receiveUserId != null">
+			AND receiveUserId = #{receiveUserId}
+		</if>	
+		<if test="num != null">
+			AND num = #{num}
+		</if>	
+		<if test="recordDate != null">
+			AND recordDate = #{recordDate}
+		</if>	
+		<if test="comment != null">
+			AND comment = #{comment}
+		</if>	
+		<if test="appendWhere != null and appendWhere != ''">
+			${appendWhere}
+		</if>           
+      </where>
+        ORDER BY 
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}
+			</when>
+			<otherwise>
+				id
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="descOrAsc != null and descOrAsc != ''">
+				${descOrAsc}
+			</when>
+			<otherwise>
+				asc 
+			</otherwise>
+		</choose>
+	</select>
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_car_give_his(
+			id,
+			carId,
+			sendUserId,
+			receiveUserId,
+			num,
+			recordDate,
+			type,
+			comment
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{carId,jdbcType=VARCHAR},
+			#{sendUserId,jdbcType=VARCHAR},
+			#{receiveUserId,jdbcType=VARCHAR},
+			#{num,jdbcType=VARCHAR},
+			#{recordDate,jdbcType=VARCHAR},
+			#{type,jdbcType=VARCHAR},
+			#{comment,jdbcType=VARCHAR}
+		)	
+		]]>
+	  </insert>
+	  
+	  <insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_car_give_his(
+			id,
+			carId,
+			sendUserId,
+			receiveUserId,
+			num,
+			recordDate,
+			type,
+			comment
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.id,jdbcType=VARCHAR},#{item.carId,jdbcType=VARCHAR},#{item.sendUserId,jdbcType=VARCHAR},#{item.receiveUserId,jdbcType=VARCHAR},#{item.num,jdbcType=VARCHAR},#{item.recordDate,jdbcType=VARCHAR},#{item.type,jdbcType=VARCHAR},#{item.comment,jdbcType=VARCHAR})
+		]]>
+		</foreach>
+	  </insert>
+	  
+	  <update id="update">
+		UPDATE t_car_give_his
+			<set>
+				<if test="carId != null">
+					 <![CDATA[ carId = #{carId,jdbcType=VARCHAR},  ]]>
+				</if>	
+			 	<if test="sendUserId != null">
+					<![CDATA[sendUserId = #{sendUserId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="receiveUserId != null">
+					 <![CDATA[ receiveUserId = #{receiveUserId,jdbcType=VARCHAR},  ]]>
+				</if>	
+				<if test="num != null">
+					 <![CDATA[ num = #{num,jdbcType=VARCHAR},  ]]>
+				</if>	
+				<if test="recordDate != null">
+					 <![CDATA[ recordDate = #{recordDate,jdbcType=VARCHAR},  ]]>
+				</if>	
+				<if test="comment != null">
+					 <![CDATA[ comment = #{comment,jdbcType=VARCHAR}  ]]>
+				</if>	
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>  			  	
+			</where>  
+	  </update>	
+	  
+	  <select id="findHis" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_car_give_his where carId=#{carId} and receiveUserId=#{receiveUserId} and type = #{type}
+	</select>
+	
+	<select id="getGiveHisByDate"  resultMap="vo">
+		select * from t_car_give_his where 1=1
+		and carId=#{carId} 
+		and receiveUserId=#{userId} 
+		and type = #{type}
+		and DATE_FORMAT(recordDate,'%Y%m%d') = #{dateStr}
+		limit 1
+	</select>
+	
+	<select id="getGiveHisByActivityTime" resultMap="vo">
+		select * from t_car_give_his where
+		receiveUserId = #{userId} 
+		<if test="beginDate != null and endDate != null">
+		 	and recordDate BETWEEN #{beginDate} AND #{endDate}
+		</if> 
+		and carId IN
+		<foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+	        #{item}
+	    </foreach>
+	</select>
+	  
+</mapper>

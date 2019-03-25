@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.car.dao.UserCarPortMapper">
+	<resultMap type="com.jiujun.shows.car.domain.UserCarPortDo" id="vo">
+	    <result property="id" column="id" />
+	    <result property="userId" column="userId" />
+	    <result property="carId" column="carId" />
+	    <result property="beginTime" column="beginTime" />
+	    <result property="endTime" column="endTime" />
+	    <result property="inUse" column="inUse" />
+	    <result property="num" column="num" />
+	    <result property="status" column="status" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_user_carport where id=#{id}
+	</select>
+	
+	<select id="getObjectByUserId" resultMap="vo">
+		select * from t_user_carport where userId=#{userId}
+	</select>
+	
+	
+	<select id="getUserCarPort"  resultMap="vo">
+		select * from t_user_carport where carId=#{carId} and userId=#{userId} limit 1
+	</select>
+	
+	<select id="getInUseUserCarPort"  resultMap="vo">
+		select * from t_user_carport where userId=#{userId} and  inUse=#{inUse}
+		LIMIT 1
+	</select>
+	
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from t_user_carport where id = #{id}
+	</delete>
+	
+	<delete id="removeByIds" >
+		delete from t_user_carport where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>	
+	
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_user_carport where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>	
+
+	<select id="countForGetListByPage"  resultType="java.lang.Integer"> 
+                <include refid="sql_count"/> 
+                <include refid="sql_getListByPage"/> 
+     </select> 
+
+	<select id="getListByPage"  resultType="java.util.Map">
+		<include refid="sql_allColumns"/> 
+		<include refid="sql_getListByPage"/>
+        ORDER BY a.inUse desc ,status asc 
+	</select>
+	
+	<select id="getInUse"  resultMap="vo">
+		select *
+		from t_user_carport a 
+		<where>
+				AND a.userId = #{userId}
+				AND a.inUse = #{inUse}
+				<![CDATA[
+					AND NOW() < a.endTime
+				]]>
+	      </where>
+	      LIMIT 1
+	</select>
+	
+	
+	<select id="getInUseDetailInfo"  resultType="java.util.Map">
+		select a.*,b.carName,b.type,b.gold,b.price,b.effectiveDays,a.id as userCarPortId
+		from t_user_carport a join t_sys_car b on a.carId = b.id
+		<where>
+				AND a.userId = #{userId}
+				AND a.inUse = #{inUse}
+	      </where>
+	</select>
+	
+	
+	 <sql id="sql_count"> 
+                select count(a.id) 
+     </sql> 
+     <sql id="sql_allColumns">
+ 		<![CDATA[
+             select a.*, CASE WHEN  (a.endTime<NOW())=1 THEN 2  WHEN  ISNULL(a.beginTime) THEN 0 ELSE 1 END status,a.id as userCarPortId,b.carName,b.type,b.gold,b.price,b.effectiveDays
+        ]]>
+     </sql> 
+	
+	<sql id="sql_getListByPage">
+		from t_user_carport a join t_sys_car b on a.carId = b.id
+	<where>
+	 	<if test="userId != null and userId != ''">
+			AND a.userId = #{userId}
+		</if>
+      </where>
+	</sql>
+	
+	
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_user_carport(
+			id,
+			userId,
+			carId,
+			beginTime,
+			endTime,
+			inUse,
+			num
+			) VALUES (
+			#{id},
+			#{userId},
+			#{carId},
+			#{beginTime},
+			#{endTime},
+			#{inUse},
+			#{num}
+		)	
+		]]>
+	  </insert>
+	  
+	  <insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_user_carport(
+			id,
+			userId,
+			carId,
+			beginTime,
+			endTime,
+			inUse,
+			num
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.id},#{item.userId},#{item.carId},#{item.beginTime},#{item.endTime},#{item.inUse},#{item.num})
+		]]>
+		</foreach>
+	  </insert>
+	  
+	  <update id="update">
+		UPDATE t_user_carport
+			<set>
+			    beginTime = #{beginTime},  
+			    endTime = #{endTime}, 
+			 	<if test="userId != null">
+					<![CDATA[userId = #{userId},  ]]>
+				</if> 	
+				<if test="carId != null">
+					 <![CDATA[ carId = #{carId},  ]]>
+				</if>	
+				<if test="inUse != null">
+					 <![CDATA[ inUse = #{inUse},  ]]>
+				</if>	
+				<if test="num != null">
+					 <![CDATA[ num = #{num}  ]]>
+				</if>	
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id} ]]>  			  	
+			</where>  
+	  </update>	
+	  
+	  <select id="findValidCarPorts"  resultMap="vo" >
+		select *
+		from t_user_carport a
+		where a.userId = #{userId}
+		and a.endTime > now()
+	</select>
+	  
+</mapper>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.lm.live.login.domain.sqlmapping.UserRegistAuto">
+	<resultMap type="com.lm.live.login.domain.UserRegistAuto" id="vo">
+	    <result property="id" column="id" />
+	    <result property="userId" column="userId" />
+	    <result property="deviceMac" column="deviceMac" />
+	    <result property="uuId" column="uuId" />
+	    <result property="deviceProperties" column="deviceProperties" />
+	    <result property="recordTime" column="recordTime" />
+	    <result property="verifyId" column="verifyId" />
+	    <result property="comment" column="comment" />
+	    <result property="isChangeNickname" column="isChangeNickname" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="int" resultMap="vo">
+		select * from t_user_regist_auto where id=#{id}
+	</select>
+	
+	<delete id="removeById" parameterType="int">
+		delete from t_user_regist_auto where id = #{id}
+	</delete>
+	
+	<delete id="removeByIds" >
+		delete from t_user_regist_auto where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>	
+	
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_user_regist_auto where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>	
+
+	<select id="getListByPage"  resultMap="vo">
+		select * from t_user_regist_auto 
+	<where>
+	 	<if test="userId != null and userId != ''">
+			AND userId like '%${userId}%'
+		</if> 	
+	 	<if test="deviceMac != null and deviceMac != ''">
+			AND deviceMac like '%${deviceMac}%'
+		</if> 	
+	 	<if test="uuId != null and uuId != ''">
+			AND uuId like '%${uuId}%'
+		</if> 	
+	 	<if test="deviceProperties != null and deviceProperties != ''">
+			AND deviceProperties like '%${deviceProperties}%'
+		</if> 	
+	 	<if test="verifyId != null and verifyId != ''">
+			AND verifyId like '%${verifyId}%'
+		</if> 	
+	 	<if test="comment != null and comment != ''">
+			AND comment like '%${comment}%'
+		</if> 	
+	 	<if test="isChangeNickname != null and isChangeNickname != ''">
+			AND isChangeNickname like '%${isChangeNickname}%'
+		</if> 	
+		<if test="appendWhere != null and appendWhere != ''">
+			${appendWhere}
+		</if>           
+      </where>
+        ORDER BY 
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}
+			</when>
+			<otherwise>
+				id
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="descOrAsc != null and descOrAsc != ''">
+				${descOrAsc}
+			</when>
+			<otherwise>
+				asc 
+			</otherwise>
+		</choose>
+	</select>
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_user_regist_auto(
+			id,
+			userId,
+			deviceMac,
+			uuId,
+			deviceProperties,
+			recordTime,
+			verifyId,
+			comment,
+			isChangeNickname
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR},
+			#{deviceMac,jdbcType=VARCHAR},
+			#{uuId,jdbcType=VARCHAR},
+			#{deviceProperties,jdbcType=VARCHAR},
+			#{recordTime,jdbcType=VARCHAR},
+			#{verifyId,jdbcType=VARCHAR},
+			#{comment,jdbcType=VARCHAR},
+			#{isChangeNickname,jdbcType=VARCHAR}
+		)	
+		]]>
+	  </insert>
+	  
+	  <insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_user_regist_auto(
+			id,
+			userId,
+			deviceMac,
+			uuId,
+			deviceProperties,
+			recordTime,
+			verifyId,
+			comment,
+			isChangeNickname
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.id,jdbcType=VARCHAR},#{item.userId,jdbcType=VARCHAR},#{item.deviceMac,jdbcType=VARCHAR},#{item.uuId,jdbcType=VARCHAR},#{item.deviceProperties,jdbcType=VARCHAR},#{item.recordTime,jdbcType=VARCHAR},#{item.verifyId,jdbcType=VARCHAR},#{item.comment,jdbcType=VARCHAR},#{item.isChangeNickname,jdbcType=VARCHAR})
+		]]>
+		</foreach>
+	  </insert>
+	  
+	  <update id="update">
+		UPDATE t_user_regist_auto
+			<set>
+			 	<if test="userId != null">
+					<![CDATA[userId = #{userId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="deviceMac != null">
+					<![CDATA[deviceMac = #{deviceMac,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="uuId != null">
+					<![CDATA[uuId = #{uuId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="deviceProperties != null">
+					<![CDATA[deviceProperties = #{deviceProperties,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="recordTime != null">
+					<![CDATA[recordTime = #{recordTime,jdbcType=VARCHAR},  ]]>
+				</if> 
+			 	<if test="verifyId != null">
+					<![CDATA[verifyId = #{verifyId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="comment != null">
+					<![CDATA[comment = #{comment,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="isChangeNickname != null">
+					<![CDATA[isChangeNickname = #{isChangeNickname,jdbcType=VARCHAR}  ]]>
+				</if> 	
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>  			  	
+			</where>  
+	  </update>	
+	  
+	   <select id="getByUserId"  resultMap="vo">
+		select * from t_user_regist_auto where userId=#{userId}
+	  </select>
+	  
+	  <select id="getByUuid"  resultMap="vo">
+		select * from t_user_regist_auto where uuId=#{uuId}
+	  </select>
+	  
+</mapper>

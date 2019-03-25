@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.lm.live</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>live-service</artifactId>
+	<packaging>war</packaging>
+	<version>${live.web.version}</version>
+	<name>live-service Maven Webapp</name>
+	<url>http://maven.apache.org</url>
+	<dependencies>
+		<dependency>
+			<groupId>com.lm.live</groupId>
+			<artifactId>live-login-api</artifactId>
+			<version>${live.login.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lm.live</groupId>
+			<artifactId>live-userinfo-api</artifactId>
+			<version>${live.userinfo.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lm.live</groupId>
+			<artifactId>live-common</artifactId>
+			<version>${live.common.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lm.live</groupId>
+			<artifactId>live-tools-api</artifactId>
+			<version>${live.tools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lm.live</groupId>
+			<artifactId>live-pay-api</artifactId>
+			<version>${live.pay.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.lm.live</groupId>
+			<artifactId>live-base-service</artifactId>
+			<version>${live.base.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<build>
+		<finalName>live-service</finalName>
+	</build>
+</project>

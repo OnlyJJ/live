@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.guard.domain.sqlmapping.GuardPunchConf">
+	<resultMap type="com.jiujun.shows.guard.domain.GuardPunchConf" id="vo">
+	    <result property="id" column="id" />
+	    <result property="type" column="type" />
+	    <result property="punchDay" column="punchDay" />
+	    <result property="prizesDay" column="prizesDay" />
+	    <result property="number" column="number" />
+	    <result property="status" column="status" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="int" resultMap="vo">
+		select * from t_guard_punch_conf where id=#{id}
+	</select>
+	
+	<select id="getConfData" resultMap="vo">
+		select * from t_guard_punch_conf where type=#{type}
+	</select>
+	
+	
+	<insert id="insert">
+		INSERT INTO t_guard_punch_conf(
+			type,
+			punchDay,
+			prizesDay,
+			number,
+			status
+		) VALUES (
+			#{type,jdbcType=VARCHAR},
+			#{punchDay,jdbcType=VARCHAR},
+			#{prizesDay,jdbcType=VARCHAR},
+			#{number,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR}
+		)
+	</insert>
+</mapper>

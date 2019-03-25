@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.car.dao.CarParkRecordMapper">
+	<resultMap type="com.jiujun.shows.car.domain.CarParkRecord" id="vo">
+	    <result property="id" column="id" />
+	    <result property="roomId" column="roomId" />
+	    <result property="anchorId" column="anchorId"/>
+	    <result property="userId" column="userId" />
+	    <result property="carId" column="carId" />
+	    <result property="carport" column="carport" />
+	    <result property="beginTime" column="beginTime" />
+	    <result property="endStatus" column="endStatus" />
+	</resultMap>
+
+	<!-- endStatus 结束状态，0，未结束，1，已结束 -->
+	<select id="findCarportByRoomId" parameterType="java.lang.String"  resultType="java.util.HashMap">
+		select * from t_car_park_record where roomId=#{roomId} and endStatus="0"
+	</select>
+	
+	<select id="findCarportByUserId" parameterType="java.lang.String" resultMap="vo">
+		select * from t_car_park_record where userId=#{userId} and endStatus="0"
+	</select>
+	
+	<select id="findCarportAll" resultMap="vo">
+		select * from t_car_park_record where endStatus="0"
+	</select>
+	
+	<select id="getCarportRecord" resultMap="vo">
+		select * from t_car_park_record where roomId=#{roomId} and carport=#{carport} and endStatus="0"
+	</select>	
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_car_park_record(
+			id,
+			roomId,
+			anchorId,
+			userId,
+			carId,
+			carport,
+			beginTime,
+			endStatus
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{roomId,jdbcType=VARCHAR},
+			#{anchorId,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR},
+			#{carId,jdbcType=VARCHAR},
+			#{carport,jdbcType=VARCHAR},
+			#{beginTime,jdbcType=VARCHAR},
+			#{endStatus,jdbcType=VARCHAR}
+		)	
+		]]>
+	  </insert>
+	  
+	  <update id="updateCarportEndStatus">
+		UPDATE t_car_park_record set endStatus = "1" where userId = #{userId} and endStatus="0"
+	  </update>	
+	  
+	  <update id="update">
+		UPDATE t_car_park_record
+			<set>
+			 	<if test="roomId != null">
+					<![CDATA[roomId = #{roomId},  ]]>
+				</if> 	
+				<if test="anchorId != null">
+					<![CDATA[anchorId = #{anchorId},  ]]>
+				</if> 
+				<if test="userId != null">
+					<![CDATA[userId = #{userId},  ]]>
+				</if> 
+				<if test="carId != null">
+					 <![CDATA[ carId = #{carId},  ]]>
+				</if>	
+				<if test="carport != null">
+					 <![CDATA[ carport = #{carport},  ]]>
+				</if>
+				<if test="beginTime != null">
+					 <![CDATA[ beginTime = #{beginTime},  ]]>
+				</if>
+				<if test="endStatus != null">
+					 <![CDATA[ endStatus = #{endStatus},  ]]>
+				</if>
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id} ]]>  			  	
+			</where>  
+	  </update>	
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.jiujun.shows.base.dao.IpRepositorMapper">
+	<resultMap type="com.jiujun.shows.base.domain.IpRepositor"  id="vo">
+		<id property="id" column="id" />
+		<result property="startIp" column="startIp" />
+		<result property="startLongIp" column="startLongIp" />
+		<result property="endIp" column="endIp" />
+		<result property="endLongIp" column="endLongIp" />
+		<result property="address" column="address" />
+		<result property="operator" column="operator" />
+		<result property="inetAtonS" column="inetAtonS" />
+		<result property="inetAtonE" column="inetAtonE" />
+	</resultMap>
+
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id
+		 ,startIp
+		 ,startLongIp
+		 ,endIp
+		 ,endLongIp
+		 ,address
+		 ,operator
+		 ,inetAtonS
+		 ,inetAtonE
+	</sql>
+	
+	<select id="getObjectById" parameterType="java.lang.Long" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_ip_repositor
+		WHERE id= #{id}
+	</select>	
+	
+	<select id="getIpRepositor" resultMap="vo">
+		SELECT <include refid="base_column" /> 
+		FROM t_ip_repositor 
+		ORDER BY startLongIp ASC
+	</select>	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_ip_repositor
+				(startIp
+				 ,startLongIp
+				 ,endIp
+				 ,endLongIp
+				 ,address
+				 ,operator
+				 ,inetAtonS
+				 ,inetAtonE
+				)
+		VALUES	(#{startIp}
+				 ,#{startLongIp}
+				 ,#{endIp}
+				 ,#{endLongIp}
+				 ,#{address}
+				 ,#{operator}
+				 ,#{inetAtonS}
+				 ,#{inetAtonE}
+				)
+	</insert>
+	
+	<update id="update">
+		UPDATE	t_ip_repositor
+		<set>
+			<if test="startIp != null and startIp != ''">
+				startIp = #{startIp,jdbcType=VARCHAR},
+			</if>
+			<if test="startLongIp != null and startLongIp != ''">
+				startLongIp = #{startLongIp,jdbcType=VARCHAR},
+			</if>
+			<if test="endIp != null and endIp != ''">
+				endIp = #{endIp,jdbcType=VARCHAR},
+			</if>
+			<if test="endLongIp != null and endLongIp != ''">
+				endLongIp = #{endLongIp,jdbcType=VARCHAR},
+			</if>
+			<if test="address != null and address != ''">
+				address = #{address,jdbcType=VARCHAR},
+			</if>
+			<if test="operator != null and operator != ''">
+				operator = #{operator,jdbcType=VARCHAR},
+			</if>
+			<if test="inetAtonS != null and inetAtonS != ''">
+				inetAtonS = #{inetAtonS},
+			</if>
+			<if test="inetAtonE != null and inetAtonE != ''">
+				inetAtonE = #{inetAtonE},
+			</if>
+		</set>
+		WHERE	id = #{id}
+		  
+	</update>
+	
+	<delete id="removeById" parameterType="java.lang.Long">
+		DELETE FROM t_ip_repositor
+		WHERE id = #{id}
+	</delete>
+	
+</mapper> 

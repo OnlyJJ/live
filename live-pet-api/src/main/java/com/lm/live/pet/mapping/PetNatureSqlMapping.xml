@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE muserer PUBLIC "-//mybatis.org//DTD Muserer 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-muserer.dtd">
+<!-- namespace必须指向Dao接口 -->
+<muserer namespace="com.jiujun.shows.user.domain.sqlmusering.PetNature">
+	<resultMap type="com.jiujun.shows.user.domain.PetNature"  id="vo">
+		<id property="id" column="id" />
+		<result property="name" column="name" />
+		<result property="remark" column="remark" />
+		<result property="natureType" column="natureType" />
+		<result property="natureVal" column="natureVal" />
+	</resultMap>
+
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id
+		 ,name
+		 ,remark
+		 ,natureType
+		 ,natureVal
+	</sql>
+	
+	<select id="getObjectById" parameterType="java.lang.Long" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_pet_nature
+		WHERE id= SHABI
+	</select>	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_pet_nature
+				(id
+				,name
+				,remark
+				,natureType
+				,natureVal
+				)
+		VALUES	(#{id,jdbcType=INT UNSIGNED}
+				,#{name}
+				,#{remark}
+				,#{natureType}
+				,#{natureVal}
+				)
+	</insert>
+	
+	<update id="update">
+		UPDATE	t_pet_nature
+		<set>
+			<if test="id != null and id != ''">
+				id = #{id},
+			</if>
+			<if test="name != null and name != ''">
+				name = #{name},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark = #{remark},
+			</if>
+			<if test="natureType != null and natureType != ''">
+				natureType = #{natureType},
+			</if>
+			<if test="natureVal != null and natureVal != ''">
+				natureVal = #{natureVal},
+			</if>
+		</set>
+		WHERE	id = #{id}}
+		  
+	</update>
+	
+	<delete id="removeById" parameterType="java.lang.Long">
+		DELETE FROM t_pet_nature
+		WHERE id = SHABI
+	</delete>
+	
+	
+</muserer> 

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.wechat.domain.sqlmapping.WechatPayUnifiedorderDo">
+	<resultMap type="com.jiujun.shows.wechat.domain.WechatPayUnifiedorderDo" id="wechatPayUnifiedorderDo">
+	    <result property="id" column="id" />
+	    <result property="userId" column="userId" />
+	    <result property="appid" column="appid" />
+	    <result property="body" column="body" />
+	    <result property="detail" column="detail" />
+	    <result property="mchId" column="mchId" />
+	    <result property="nonceStr" column="nonceStr" />
+	    <result property="notifyUrl" column="notifyUrl" />
+	    <result property="outTradeNo" column="outTradeNo" />
+	    <result property="sign" column="sign" />
+	    <result property="spbillCreateIp" column="spbillCreateIp" />
+	    <result property="totalFee" column="totalFee" />
+	    <result property="tradeType" column="tradeType" />
+	    <result property="recordDateTime" column="recordDateTime" />
+	     <result property="xmlData" column="xmlData" />
+	</resultMap>
+
+	
+
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		  <![CDATA[
+		  INSERT INTO t_wechat_pay_unifiedorder(
+					userId,
+					appid,
+					body,
+					detail,
+					mchId,
+					nonceStr,
+					notifyUrl,
+					outTradeNo,
+					sign,
+					spbillCreateIp,
+					totalFee,
+					tradeType,
+					recordDateTime,
+					xmlData
+				) VALUES (
+				#{userId,jdbcType=VARCHAR},
+				#{appid,jdbcType=VARCHAR},
+				#{body,jdbcType=VARCHAR},
+				#{detail,jdbcType=VARCHAR},
+				#{mchId,jdbcType=VARCHAR},
+				#{nonceStr,jdbcType=VARCHAR},
+				#{notifyUrl,jdbcType=VARCHAR},
+				#{outTradeNo,jdbcType=VARCHAR},
+				#{sign,jdbcType=VARCHAR},
+				#{spbillCreateIp,jdbcType=VARCHAR},
+				#{totalFee,jdbcType=TINYINT},
+				#{tradeType,jdbcType=VARCHAR},
+				#{recordDateTime},				
+				#{xmlData,jdbcType=VARCHAR}
+			)	
+			]]>
+	  </insert>
+	  
+</mapper>

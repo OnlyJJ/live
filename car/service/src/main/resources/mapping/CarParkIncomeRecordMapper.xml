@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.car.dao.CarParkIncomeRecordMapper">
+	<resultMap type="com.jiujun.shows.car.domain.CarParkIncomeRecord" id="vo">
+	    <result property="id" column="id" />
+	    <result property="userId" column="userId" />
+	    <result property="parkRecordId" column="parkRecordId" />
+	    <result property="prakIncomConfId" column="prakIncomConfId" />
+	    <result property="recordTime" column="recordTime" />
+	</resultMap>
+
+	<select id="findCarParkIncomeRecord" parameterType="java.lang.Integer" resultType="java.util.HashMap">
+	<!--select * from t_car_park_income_record where userId=#{userId} and DATE_FORMAT(recordTime,'%y-%m-%d') =DATE_FORMAT(NOW(),"%y-%m-%d") -->
+		SELECT r.* FROM t_car_park_income_record r 
+			LEFT JOIN t_car_park_record p ON r.parkRecordId=p.id 
+			LEFT JOIN t_car_park_income_conf c ON r.prakIncomConfId=c.id 
+			WHERE r.userId=#{userId} 
+			AND DATE_FORMAT(r.recordTime,'%y-%m-%d') =DATE_FORMAT(NOW(),"%y-%m-%d")
+	</select>
+	
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_car_park_income_record(
+			id,
+			userId,
+			parkRecordId,
+			prakIncomConfId,
+			recordTime
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR},
+			#{parkRecordId,jdbcType=VARCHAR},
+			#{prakIncomConfId,jdbcType=VARCHAR},
+			#{recordTime,jdbcType=VARCHAR}
+		)	
+		]]>
+	  </insert>
+	  
+	  <update id="update">
+		UPDATE t_car_park_income_record
+			<set>
+			 	<if test="userId != null">
+					<![CDATA[userId = #{userId},  ]]>
+				</if> 	
+				<if test="parkRecordId != null">
+					 <![CDATA[ parkRecordId = #{parkRecordId},  ]]>
+				</if>	
+				<if test="prakIncomConfId != null">
+					 <![CDATA[ prakIncomConfId = #{prakIncomConfId},  ]]>
+				</if>	
+				<if test="recordTime != null">
+					 <![CDATA[ recordTime = #{recordTime},  ]]>
+				</if>	
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id} ]]>  			  	
+			</where>  
+	  </update>	
+</mapper>

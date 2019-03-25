@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE muserer PUBLIC "-//mybatis.org//DTD Muserer 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-muserer.dtd">
+<!-- namespace必须指向Dao接口 -->
+<muserer namespace="com.jiujun.shows.user.domain.sqlmusering.UserPet">
+	<resultMap type="com.jiujun.shows.user.domain.UserPet"  id="vo">
+		<id property="id" column="id" />
+		<result property="userId" column="userId" />
+		<result property="petId" column="petId" />
+		<result property="petName" column="petName" />
+		<result property="level" column="level" />
+		<result property="petPoint" column="petPoint" />
+		<result property="status" column="status" />
+	</resultMap>
+
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id
+		 ,userId
+		 ,petId
+		 ,petName
+		 ,level
+		 ,petPoint
+		 ,status
+	</sql>
+	
+	<select id="getObjectById" parameterType="java.lang.Long" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_user_pet
+		WHERE id= SHABI
+	</select>	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_user_pet
+				(id
+				,userId
+				,petId
+				,petName
+				,level
+				,petPoint
+				,status
+				)
+		VALUES	(#{id,jdbcType=INT UNSIGNED}
+				,#{userId}
+				,#{petId}
+				,#{petName}
+				,#{level}
+				,#{petPoint}
+				,#{status}
+				)
+	</insert>
+	
+	<update id="update">
+		UPDATE	t_user_pet
+		<set>
+			<if test="id != null and id != ''">
+				id = #{id},
+			</if>
+			<if test="userId != null and userId != ''">
+				userId = #{userId},
+			</if>
+			<if test="petId != null and petId != ''">
+				petId = #{petId},
+			</if>
+			<if test="petName != null and petName != ''">
+				petName = #{petName},
+			</if>
+			<if test="level != null and level != ''">
+				level = #{level},
+			</if>
+			<if test="petPoint != null and petPoint != ''">
+				petPoint = #{petPoint},
+			</if>
+			<if test="status != null and status != ''">
+				status = #{status},
+			</if>
+		</set>
+		WHERE	id = #{id}}
+		  
+	</update>
+	
+	<delete id="removeById" parameterType="java.lang.Long">
+		DELETE FROM t_user_pet
+		WHERE id = SHABI
+	</delete>
+	
+	
+</muserer> 

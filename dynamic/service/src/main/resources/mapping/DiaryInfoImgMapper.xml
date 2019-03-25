@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.jiujun.shows.dynamic.dao.DiaryInfoImgMapper">
+	<resultMap type="com.jiujun.shows.dynamic.domain.home.DiaryInfoImg"  id="vo">
+		<id property="id" column="id" />
+		<result property="diaryinfoId" column="diaryinfoId" />
+		<result property="ratioIndex" column="ratioIndex" />
+		<result property="ratioInfo" column="ratioInfo" />
+		<result property="url" column="url" />
+		<result property="uploadTime" column="uploadTime" />
+	</resultMap>
+
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id
+		 ,diaryinfoId
+		 ,ratioIndex
+		 ,ratioInfo
+		 ,url
+		 ,uploadTime
+	</sql>
+	
+	<select id="getObjectById" parameterType="java.lang.Long" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_diary_info_img
+		WHERE id= #{id}
+	</select>	
+	
+	<select id="getImgsByDiaryInfoId" parameterType="java.lang.Long" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_diary_info_img
+		WHERE diaryinfoId= #{diaryInfoId}
+	</select>
+	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_diary_info_img
+				(id
+				,diaryinfoId
+				,ratioIndex
+				,ratioInfo
+				,url
+				,uploadTime
+				)
+		VALUES	(#{id,jdbcType=BIGINT}
+				,#{diaryinfoId}
+				,#{ratioIndex}
+				,#{ratioInfo}
+				,#{url}
+				,#{uploadTime}
+				)
+	</insert>
+	
+	<update id="update">
+		UPDATE	t_diary_info_img
+		<set>
+			<if test="id != null and id != ''">
+				id = #{id,jdbcType=BIGINT},
+			</if>
+			<if test="diaryinfoId != null and diaryinfoId != ''">
+				diaryinfoId = #{diaryinfoId,jdbcType=BIGINT},
+			</if>
+			<if test="ratioIndex != null and ratioIndex != ''">
+				ratioIndex = #{ratioIndex,jdbcType=CHAR},
+			</if>
+			<if test="ratioInfo != null and ratioInfo != ''">
+				ratioInfo = #{ratioInfo,jdbcType=VARCHAR},
+			</if>
+			<if test="url != null and url != ''">
+				url = #{url,jdbcType=VARCHAR},
+			</if>
+			<if test="uploadTime != null and uploadTime != ''">
+				uploadTime = #{uploadTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		WHERE	id = #{id,jdbcType=BIGINT}
+		  
+	</update>
+	
+	<delete id="removeById" parameterType="java.lang.Long">
+		DELETE FROM t_diary_info_img
+		WHERE id = #{id}
+	</delete>
+	
+	
+</mapper> 

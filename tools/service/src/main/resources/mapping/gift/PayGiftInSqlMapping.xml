@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.jiujun.shows.charge.domain.sqlmapping.PayGiftIn">
+	<resultMap type="com.jiujun.shows.charge.domain.PayGiftIn"
+		id="vo">
+		<result property="id" column="id" />
+		<result property="orderId" column="orderId" />
+		<result property="userId" column="userId" />
+		<result property="giftId" column="giftId" />
+		<result property="price" column="price" />
+		<result property="number" column="number" />
+		<result property="gold" column="gold" />
+		<result property="remark" column="remark" />
+		<result property="resultTime" column="resultTime" />
+		<result property="isOnSale" column="isOnSale" />
+		<result property="onSaleMsg" column="onSaleMsg" />
+		<result property="returnGold" column="returnGold" />
+		<result property="realGold" column="realGold" />
+
+		<result property="giftName" column="giftName" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer"
+		resultMap="vo">
+		select * from t_pay_gift_in where id=#{id}
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from t_pay_gift_in
+		where id = #{id}
+	</delete>
+
+	<delete id="removeByIds">
+		delete from t_pay_gift_in where id in
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_pay_gift_in where id in
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>
+
+	<select id="getListByPage" resultMap="vo">
+		select a.*,b.name as giftName
+		from t_pay_gift_in a
+		inner join t_gift b on( a.giftId = b.id)
+
+		<where>
+			<if test="orderId != null and orderId != ''">
+				AND a.orderId like '%${orderId}%'
+			</if>
+			<if test="userId != null and userId != ''">
+				AND a.userId like '%${userId}%'
+			</if>
+			<if test="giftId != null">
+				AND a.giftId = #{giftId}
+			</if>
+			<if test="price != null">
+				AND a.price = #{price}
+			</if>
+			<if test="number != null">
+				AND a.number = #{number}
+			</if>
+			<if test="gold != null">
+				AND a.gold = #{gold}
+			</if>
+			<if test="remark != null and remark != ''">
+				AND a.remark like '%${remark}%'
+			</if>
+			<if test="startTime != null and startTime != ''">
+				AND a.resultTime >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				AND a.resultTime <![CDATA[<=]]>
+				#{endTime}
+			</if>
+			<if test="isOnSale != null">
+				AND a.isOnSale = #{isOnSale}
+			</if>
+			<if test="onSaleMsg != null and onSaleMsg != ''">
+				AND a.onSaleMsg like '%${onSaleMsg}%'
+			</if>
+			<if test="returnGold != null">
+				AND a.returnGold = #{returnGold}
+			</if>
+			<if test="realGold != null">
+				AND a.realGold = #{realGold}
+			</if>
+			<if test="appendWhere != null and appendWhere != ''">
+				${appendWhere}
+			</if>
+		</where>
+
+
+
+		ORDER BY
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}
+			</when>
+			<otherwise>
+				a.id
+			</otherwise>
+		</choose>
+
+
+
+
+		<choose>
+			<when test="descOrAsc != null and descOrAsc != ''">
+				${descOrAsc}
+			</when>
+			<otherwise>
+				asc
+			</otherwise>
+		</choose>
+	</select>
+
+
+	
+
+
+
+
+
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		<!-- <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select 
+			nextval('seq_xxx')</selectKey> -->
+	  <![CDATA[
+	  INSERT INTO t_pay_gift_in(
+			id,
+			orderId,
+			userId,
+			giftId,
+			price,
+			number,
+			gold,
+			remark,
+			resultTime,
+			isOnSale,
+			onSaleMsg,
+			returnGold,
+			realGold
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{orderId,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR},
+			#{giftId,jdbcType=VARCHAR},
+			#{price,jdbcType=VARCHAR},
+			#{number,jdbcType=VARCHAR},
+			#{gold,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR},
+			#{resultTime,jdbcType=VARCHAR},
+			#{isOnSale,jdbcType=TINYINT},
+			#{onSaleMsg,jdbcType=VARCHAR},
+			#{returnGold,jdbcType=VARCHAR},
+			#{realGold,jdbcType=VARCHAR}
+		)	
+		]]>
+	</insert>
+
+	<insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_pay_gift_in(
+			id,
+			orderId,
+			userId,
+			giftId,
+			price,
+			number,
+			gold,
+			remark,
+			resultTime,
+			isOnSale,
+			onSaleMsg,
+			returnGold,
+			realGold
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.id,jdbcType=VARCHAR},#{item.orderId,jdbcType=VARCHAR},#{item.userId,jdbcType=VARCHAR},#{item.giftId,jdbcType=VARCHAR},#{item.price,jdbcType=VARCHAR},#{item.number,jdbcType=VARCHAR},#{item.gold,jdbcType=VARCHAR},#{item.remark,jdbcType=VARCHAR},#{item.resultTime,jdbcType=VARCHAR},#{item.isOnSale,jdbcType=TINYINT},#{item.onSaleMsg,jdbcType=VARCHAR},#{item.returnGold,jdbcType=VARCHAR},#{item.realGold,jdbcType=VARCHAR})
+		]]>
+		</foreach>
+	</insert>
+
+	<update id="update">
+		UPDATE t_pay_gift_in
+		<set>
+			<if test="orderId != null">
+					<![CDATA[orderId = #{orderId,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="userId != null">
+					<![CDATA[userId = #{userId,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="giftId != null">
+					 <![CDATA[ giftId = #{giftId,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="price != null">
+					 <![CDATA[ price = #{price,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="number != null">
+					 <![CDATA[ number = #{number,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="gold != null">
+					 <![CDATA[ gold = #{gold,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="remark != null">
+					<![CDATA[remark = #{remark,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="resultTime != null">
+					<![CDATA[resultTime = #{resultTime,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="isOnSale != null">
+					 <![CDATA[ isOnSale = #{isOnSale,jdbcType=TINYINT},  ]]>
+			</if>
+			<if test="onSaleMsg != null">
+					<![CDATA[onSaleMsg = #{onSaleMsg,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="returnGold != null">
+					 <![CDATA[ returnGold = #{returnGold,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="realGold != null">
+					 <![CDATA[ realGold = #{realGold,jdbcType=VARCHAR}  ]]>
+			</if>
+		</set>
+		<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>
+		</where>
+	</update>
+</mapper>

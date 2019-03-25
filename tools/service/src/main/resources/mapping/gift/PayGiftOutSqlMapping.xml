@@ -1,0 +1,1015 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.jiujun.shows.charge.domain.sqlmapping.PayGiftOut">
+	<resultMap type="com.jiujun.shows.charge.domain.PayGiftOut"
+		id="vo">
+		<result property="id" column="id" />
+		<result property="orderId" column="orderId" />
+		<result property="userId" column="userId" />
+		<result property="toUserId" column="toUserId" />
+		<result property="giftId" column="giftId" />
+		<result property="number" column="number" />
+		<result property="diamond" column="diamond" />
+		<result property="resultTime" column="resultTime" />
+		<result property="remark" column="remark" />
+		<result property="price" column="price" />
+		<result property="gold" column="gold" />
+
+		<result property="name" column="name" />   <!-- 礼物名称 -->
+		<result property="giftPrice" column="giftPrice" />  <!-- 礼物对应金币价 -->
+		<result property="giftRate" column="giftRate" /> <!-- 礼物金币价值与主播钻石收入比例 -->
+		
+		
+		<result property="nickName" column="nickName" />
+		<result property="toNickName" column="toNickName" />
+		
+		<result property="groupBy" column="groupBy" />
+		<result property="selectTime" column="selectTime" />
+		<result property="income" column="income" />
+		<result property="sourceType" column="sourceType" />
+		 
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer"
+		resultMap="vo">
+		select * from t_pay_gift_out where id=#{id}
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from t_pay_gift_out
+		where id = #{id}
+	</delete>
+
+	<delete id="removeByIds">
+		delete from t_pay_gift_out where id in
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_pay_gift_out where id in
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>
+
+	<select id="getListByPage" resultMap="vo">
+		select a.*,b.name,b.price as giftPrice,b.rate as giftRate,c.nickName,d.nickName as 'toNickName' from
+		t_pay_gift_out a
+		left join t_gift b on( a.giftId = b.id)
+		left join t_user_info c on ( a.userId = c.userId )
+		left join t_user_info d on ( a.toUserId = d.userId )
+		<where>
+			<if test="orderId != null and orderId != ''">
+				AND a.orderId like '%${orderId}%'
+			</if>
+			<if test="userId != null and userId != ''">
+				AND a.userId like '%${userId}%'
+			</if>
+			<if test="toUserId != null and toUserId != ''">
+				AND a.toUserId like '%${toUserId}%'
+			</if>
+			<if test="giftId != null">
+				AND a.giftId = #{giftId}
+			</if>
+			<if test="number != null">
+				AND a.number = #{number}
+			</if>
+			<if test="diamond != null">
+				AND a.diamond = #{diamond}
+			</if>
+			<if test="startTime != null and startTime != ''">
+			<![CDATA[AND a.resultTime >= #{startTime} ]]>
+			</if>
+			<if test="endTime != null and endTime != ''">
+			<![CDATA[AND a.resultTime <= #{endTime} ]]>
+			</if>
+			<if test="remark != null and remark != ''">
+				AND a.remark like '%${remark}%'
+			</if>
+
+
+			<!-- 关联gift表 name字段 -->
+			<if test="name != null and name != ''">
+				AND b.name like '%${name}%'
+			</if>
+
+			<!-- 关联user_info表 userAccount字段 (送礼用户) -->
+			<if test="nickName != null and nickName != ''">
+				AND c.nickName like '%${nickName}%'
+			</if>
+
+			<!-- 关联user_info表 userAccount字段(收礼用户) -->
+			<if test="toNickName != null and toNickName != ''">
+				AND d.nickName like '%${toNickName}%'
+			</if>
+
+
+			<if test="appendWhere != null and appendWhere != ''">
+				${appendWhere}
+			</if>
+		</where>
+		
+		ORDER BY
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}
+			</when>
+			<otherwise>
+				a.id
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="descOrAsc != null and descOrAsc != ''">
+				${descOrAsc}
+			</when>
+			<otherwise>
+				asc
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<select id="getListByPageDiamond" resultMap="vo">
+		SELECT a.toUserId,COUNT(a.id) AS giftRecordCount,SUM(a.number) AS giftNumberSum ,SUM(a.diamond) AS diamondNumberSum,b.diamond AS diamondNow
+		FROM t_pay_gift_out a 
+		left join t_user_account b on ( a.toUserId = b.userId )
+		<where>
+			<if test="toUserId != null and toUserId != ''">
+				AND a.toUserId like '%${toUserId}%'
+			</if>
+		</where>
+		
+		GROUP BY
+      	<choose>
+			<when test="groupBy != null and groupBy != ''">
+				${groupBy}
+			</when>
+			<otherwise>
+				a.toUserId
+			</otherwise>
+		</choose> 
+		
+		
+
+		ORDER BY
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}
+			</when>
+			<otherwise>
+				a.id
+			</otherwise>
+		</choose>
+
+
+		<choose>
+			<when test="descOrAsc != null and descOrAsc != ''">
+				${descOrAsc}
+			</when>
+			<otherwise>
+				asc
+			</otherwise>
+		</choose>
+	</select>
+	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		<!-- <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select 
+			nextval('seq_xxx')</selectKey> -->
+	  <![CDATA[
+	  INSERT INTO t_pay_gift_out(
+			id,
+			orderId,
+			userId,
+			toUserId,
+			giftId,
+			number,
+			diamond,
+			resultTime,
+			price,
+			remark,
+			sourceType
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{orderId,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR},
+			#{toUserId,jdbcType=VARCHAR},
+			#{giftId,jdbcType=VARCHAR},
+			#{number,jdbcType=VARCHAR},
+			#{diamond,jdbcType=VARCHAR},
+			#{resultTime,jdbcType=VARCHAR},
+			#{price,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR},
+			#{sourceType}
+		)	
+		]]>
+	</insert>
+
+	<insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_pay_gift_out(
+			id,
+			orderId,
+			userId,
+			toUserId,
+			giftId,
+			number,
+			diamond,
+			gold,
+			resultTime,
+			remark,
+			sourceType
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.id,jdbcType=VARCHAR},#{item.orderId,jdbcType=VARCHAR},#{item.userId,jdbcType=VARCHAR},#{item.toUserId,jdbcType=VARCHAR},#{item.giftId,jdbcType=VARCHAR},#{item.number,jdbcType=VARCHAR},#{item.diamond,jdbcType=VARCHAR},#{item.gold,jdbcType=VARCHAR},#{item.resultTime,jdbcType=VARCHAR},#{item.remark,jdbcType=VARCHAR},#{item.sourceType})
+		]]>
+		</foreach>
+	</insert>
+
+	<update id="update">
+		UPDATE t_pay_gift_out
+		<set>
+			<if test="orderId != null">
+					<![CDATA[orderId = #{orderId,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="userId != null">
+					<![CDATA[userId = #{userId,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="toUserId != null">
+					<![CDATA[toUserId = #{toUserId,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="giftId != null">
+					 <![CDATA[ giftId = #{giftId,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="number != null">
+					 <![CDATA[ number = #{number,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="diamond != null">
+					 <![CDATA[ diamond = #{diamond,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="resultTime != null">
+					<![CDATA[resultTime = #{resultTime,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="remark != null">
+					<![CDATA[remark = #{remark,jdbcType=VARCHAR}  ]]>
+			</if>
+		</set>
+		<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>
+		</where>
+	</update>
+	<select id="getListIncomeByPage" resultMap="vo">
+		 SELECT t.date_ AS selectTime , t.nickName AS toNickName, t.totalGolds AS income
+			 FROM(
+				 SELECT b.date_ AS date_ , a.nickName AS nickName, b.totalGolds/10 AS totalGolds
+				 FROM t_user_info a 
+				 JOIN (
+					 SELECT DATE_FORMAT(a.resultTime,'%Y-%m-%d') AS date_,a.toUserId AS toUserId,SUM(a.diamond) totalGolds
+					 FROM t_pay_gift_out a 
+					 <where> 1=1
+						 AND a.diamond IS NOT NULL
+					 	<if test="selectTime != null and selectTime != ''">
+					 		AND a.resultTime like '%${selectTime}%'	
+					 	</if>
+					 </where>
+					 GROUP BY date_,a.toUserId
+					 ORDER BY date_ DESC
+				      ) b
+				 ON b.toUserId = a.userId
+			)t
+	</select>
+	
+	<!-- 
+	<select id="getListDecorateGift" resultType="java.long.HashMap">
+		SELECT toUserId,COUNT(*) 
+			FROM
+ 			t_pay_gift_out 
+			WHERE giftId in
+				<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+ 			AND DATE_FORMAT(resultTime, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d') 
+			GROUP BY toUserId;
+	</select>
+	 -->
+		<select id="getListDecorateGift" resultMap="vo">
+		SELECT toUserId,SUM(number) AS giftNumberSum
+			FROM
+ 			t_pay_gift_out 
+			WHERE toUserId = #{toUserId} 
+			AND giftId = #{giftId}
+ 			AND resultTime BETWEEN #{beginTime} AND #{endTime}
+	</select>
+	
+	
+	<select id="statisticsSendGiftByDate" resultType="java.util.Map" >
+		SELECT a.userId AS userId,SUM(a.number) AS sumNum
+		FROM t_pay_gift_out a
+		WHERE a.giftId=#{giftId}
+		<![CDATA[
+			AND a.resultTime >= #{beginTime}
+			and a.resultTime <= #{endTime}
+			 ]]>
+		GROUP BY a.userId
+	</select>
+	
+	<select id="statisticsReceiveGiftByDate" resultType="java.util.Map" >
+		 SELECT a.toUserId AS userId,SUM(a.number) AS sumNum
+		FROM t_pay_gift_out a
+		WHERE a.giftId=#{giftId}
+		<![CDATA[
+			AND a.resultTime >= #{beginTime}
+			and a.resultTime <= #{endTime}
+			 ]]>
+		GROUP BY a.toUserId
+	</select>
+	
+	<select id="statisticsNumGiftGroupByUserAndRoom" resultType="java.lang.Integer" >
+		
+			SELECT SUM(a.number) AS sumNum
+			FROM t_pay_gift_out a
+			WHERE a.giftId=#{giftId}
+			<![CDATA[
+			AND a.resultTime >= #{beginTime}
+			and a.resultTime <= #{endTime}
+			 ]]>
+			<if test="senderUserId != null">
+				and <![CDATA[userId = #{senderUserId,jdbcType=VARCHAR}  ]]>
+			</if>
+			<if test="receiveUserId != null" >
+				and <![CDATA[toUserId = #{receiveUserId,jdbcType=VARCHAR}  ]]>
+			</if>
+			GROUP BY a.userId,a.toUserId
+			limit 1
+		
+	</select>
+	
+	<select id="statisticsNumGiftUserOrAnchor" resultType="java.lang.Integer" >
+		
+			SELECT SUM(a.number) AS sumNum
+			FROM t_pay_gift_out a
+			WHERE a.giftId=#{giftId}
+			<![CDATA[
+			AND a.resultTime >= #{beginTime}
+			and a.resultTime <= #{endTime}
+			 ]]>
+			<if test="userId != null">
+				and <![CDATA[userId = #{userId,jdbcType=VARCHAR}  ]]>
+			</if>
+			<if test="toUserId != null" >
+				and <![CDATA[toUserId = #{toUserId,jdbcType=VARCHAR}  ]]>
+			</if>
+	</select>
+	
+	<select id="getUserSendGiftSum" resultType="java.lang.Integer">
+		SELECT SUM(number) AS giftSum
+			FROM
+ 			t_pay_gift_out 
+			WHERE userId = #{userId} 
+			AND giftId = #{giftId}
+ 			AND resultTime BETWEEN #{beginTime} AND #{endTime}
+	</select>
+	
+	
+	<select id="getUserSpecialGiftSum" resultType="java.util.HashMap">
+		 SELECT a.userId AS userId,SUM(a.number) AS sumNum
+			FROM t_pay_gift_out a
+			WHERE a.giftId=#{giftId}
+			<![CDATA[
+				AND a.resultTime >= #{beginTime}
+				AND a.resultTime <= #{endTime}
+			]]>
+			GROUP BY a.userId
+			ORDER BY sumNum DESC
+	</select> 
+	
+		<select id="getAnchorSpecialGiftSum" resultType="java.util.HashMap">
+		 SELECT a.toUserId AS userId,SUM(a.number) AS sumNum
+			FROM t_pay_gift_out a
+			WHERE a.giftId=#{giftId}
+			<![CDATA[
+				AND a.resultTime >= #{beginTime}
+				AND a.resultTime <= #{endTime}
+			]]>
+			GROUP BY a.toUserId
+			ORDER BY sumNum DESC
+	</select> 
+	
+	<select id="sumLuckygiftTotalGold2Pool" resultType="java.lang.Long">
+			SELECT SUM(a.price)
+			FROM t_pay_gift_out a
+			JOIN t_gift b ON a.giftId=b.id
+			WHERE b.giftType= #{giftType}
+			<![CDATA[
+				and a.resultTime < DATE_FORMAT(#{date},'%Y-%m-%d')
+			]]>
+	</select> 
+	
+	<select id="sumDateToDateLuckygiftTotalGold2Pool" resultType="java.lang.Long">
+			SELECT SUM(a.price)
+			FROM t_pay_gift_out a
+			JOIN t_gift b ON a.giftId=b.id
+			WHERE b.giftType= #{giftType}
+			<![CDATA[
+				and a.resultTime >= DATE_FORMAT(#{startDate},'%Y-%m-%d')
+				and a.resultTime < DATE_FORMAT(#{date},'%Y-%m-%d')
+			]]>
+	</select> 
+	
+	<select id="sumAnchorReceiveGiftNum" resultType="java.lang.Integer">
+		 SELECT SUM(a.number) AS sumNum
+			FROM t_pay_gift_out a
+			<where>
+			
+				<if test="anchorId != null and anchorId != ''">
+					AND a.toUserId=#{anchorId}
+				</if>
+				<if test="beginTime != null and beginTime != ''">
+					<![CDATA[	
+					AND a.resultTime >= #{beginTime}
+					]]>
+				</if>
+				<if test="endTime != null and endTime != ''">
+					<![CDATA[	
+					AND a.resultTime <= #{endTime}
+					]]>
+				</if>
+				
+				<if test="giftId != null and giftId != ''">
+					AND a.giftId = #{giftId}
+				</if>
+			
+			</where>
+			AND sourceType=0
+	</select> 
+	
+	<select id="getStaticsGiftSort" resultType="java.util.HashMap">
+		 SELECT userId,SUM(price) AS sumPrice
+			FROM t_pay_gift_out 
+			WHERE 1=1
+			<![CDATA[
+				AND resultTime >= #{beginTime}
+				AND resultTime <= #{endTime}
+			]]>
+			GROUP BY userId
+			ORDER BY sumPrice DESC
+			LIMIT #{num}
+	</select> 
+	
+	<select id="getAnchorSumForGiftIds" resultType="java.lang.Long">
+		SELECT sum(number) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE toUserId = #{anchorId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			AND giftId in
+				<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+	</select>
+	
+	<!-- 赠送年度礼物排行 -->
+	<select id="getYearGiftSort" resultType="java.util.HashMap">
+		 SELECT userId FROM t_pay_gift_out a
+			WHERE a.sourceType = 0 AND a.giftId IN (140,16,149,1,52,135,35,137,23,157,151,143)
+			<![CDATA[
+				AND a.resultTime >= #{beginTime}
+				AND a.resultTime <= #{endTime}
+			]]>
+			GROUP BY a.userId 
+			ORDER BY SUM(a.price) DESC
+			LIMIT #{num}
+	</select> 
+	
+	
+	<select id="getStaticsGiftsForNDAnchor" resultType="java.util.HashMap">
+		SELECT toUserId AS userId,sum(price) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			AND giftId in
+				<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			GROUP BY toUserId
+			ORDER BY total DESC
+			LIMIT 20
+	</select>
+	
+	<select id="getStaticsGiftsForNDUser" resultType="java.util.HashMap">
+		SELECT userId,sum(price) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			AND giftId in
+				<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			GROUP BY userId
+			ORDER BY total DESC
+			LIMIT 20
+	</select>
+	
+	<select id="qry210612ActivityueshanzhiyueTopHisUser" resultType="java.util.HashMap">
+		SELECT userId AS userId,DATE_FORMAT(resultTime,'%Y-%m-%d') AS dateStr,SUM(number) AS totalSendNum
+		FROM t_pay_gift_out 
+		WHERE giftId= #{giftId}
+		<![CDATA[
+			AND resultTime >= #{activityBeginTime} 
+			AND resultTime <= #{activityEndTime}
+			]]>
+		AND DATE_FORMAT(resultTime,'%Y-%m-%d') =  #{dateStr}
+		GROUP BY userId,dateStr
+		ORDER BY totalSendNum DESC,resultTime ASC 
+		LIMIT 1
+	</select>
+	
+	<select id="qry210612ActivityXueshanzhiyueTopHisAnchor" resultType="java.lang.String">
+			SELECT toUserId
+			FROM t_pay_gift_out 
+			WHERE giftId= #{giftId}
+			AND userId= #{userId}
+			<![CDATA[
+			AND resultTime >= #{activityBeginTime} 
+			AND resultTime <= #{activityEndTime}
+			]]>
+			AND DATE_FORMAT(resultTime,'%Y-%m-%d') =  #{dateStr}
+			GROUP BY userId,toUserId
+			ORDER BY SUM(number) DESC,resultTime ASC 
+			LIMIT 1
+	</select>
+	
+	
+	<select id="getUsersSendGiftForActivity" resultType="java.util.HashMap">
+		SELECT userId,sum(price) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			AND toUserId = #{toUserId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			GROUP BY userId
+			HAVING total > #{consumeGolgs}
+	</select>
+	
+	<select id="getRoomSendGiftNumberForActivity" resultType="java.util.HashMap">
+		SELECT userId,sum(number) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			AND toUserId = #{toUserId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			AND giftId in
+				<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			GROUP BY userId
+	</select>
+	
+	<!-- 统计房间所有用户收礼总金币，按用户分组 -->
+	<select id="getRoomRecGoldForActivity" resultType="java.util.HashMap">
+		SELECT userId,sum(price) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			AND toUserId = #{toUserId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			GROUP BY userId
+	</select>
+	
+	<!-- 用户全站送礼金币，按用户分组 -->
+	<select id="getAllstationGoldForUser" resultType="java.util.HashMap">
+		SELECT userId,sum(price) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			GROUP BY userId
+	</select>
+	
+	<!-- 全站主播收礼金币，按主播分组 -->
+	<select id="getAllstationGoldForAnchor" resultType="java.util.HashMap">
+		SELECT toUserId,sum(price) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			GROUP BY toUserId
+	</select>
+	
+	<!-- 用户送给某主播的金币价值 -->
+	<select id="getUserSendGoldForAnchor" resultType="java.lang.Long">
+		SELECT sum(price) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			AND userId = #{userId}
+			AND toUserId = #{toUserId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			LIMIT 1
+	</select>
+	
+	<!-- 统计用户全站送礼总金币 -->
+	<select id="getUserSendAllstationGold" resultType="java.lang.Long">
+		SELECT sum(price) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			AND userId = #{userId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			LIMIT 1
+	</select>
+	
+	<!-- 统计主播收礼总金币 -->
+	<select id="getAnchorReceiveGold" resultType="java.lang.Long">
+		SELECT sum(price) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			AND toUserId = #{toUserId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			LIMIT 1
+	</select>
+	
+	<select id="getAnchorReceiveGoldsByGifts" resultType="java.lang.Long">
+		SELECT sum(price) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE toUserId = #{toUserId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			AND sourceType=0
+			AND giftId in
+				<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+	</select>
+	
+	<select id="getAnchorReceiveGoldsAllGifts" resultType="java.lang.Long">
+		SELECT sum(price) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE toUserId = #{toUserId}
+			AND sourceType=0
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+	</select>
+	
+	<select id="getUserSendGiftNumForAnchor" resultType="java.lang.Long">
+		SELECT sum(number) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			AND toUserId = #{toUserId}
+			AND userId = #{userId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			AND giftId in
+				<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+	</select>
+	
+	<select id="getAllAnchorRecGiftNumber" resultType="java.util.HashMap">
+		SELECT toUserId,sum(number) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			AND giftId in
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			GROUP BY toUserId
+	</select>
+	
+	<select id="getUserSendGiftNumAll" resultType="java.lang.Integer">
+		SELECT sum(number) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			AND userId = #{userId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			AND giftId in
+				<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+	</select>
+	
+	<select id="getSumpriceByUserid" resultType="java.lang.Long">
+			select sum(price) AS total from t_pay_gift_out where touserid = #{userId}
+			and  DATE_FORMAT(resulttime,'%Y%m')  = #{date}
+	</select>
+	
+	<!--
+	<select id="getToUserIdByPrice" resultType="java.lang.String">
+		select toUserId from t_pay_gift_out where toUserId in 
+		 <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
+	        #{item}
+	    </foreach>
+		
+		<![CDATA[
+			AND resultTime BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 90 DAY) AND CURRENT_DATE GROUP BY toUserId HAVING SUM(price) < 1000000
+		]]>
+	</select>
+	-->
+	
+	<select id="getToUserIdByPrice" parameterType="java.lang.String" resultType="java.lang.Long">
+		SELECT SUM(price) FROM t_pay_gift_out WHERE toUserId = #{toUserId}
+		<![CDATA[
+			AND resultTime BETWEEN DATE_SUB(CURRENT_DATE, INTERVAL 90 DAY) AND CURRENT_DATE
+		]]>
+	</select>
+	
+	
+	<select id="getSumpriceInWeekByUserid" resultType="java.lang.Long">
+			select sum(price) as total from t_pay_gift_out where userId = #{userId}
+			<![CDATA[
+			and resulttime >= #{startTime} and resulttime <= #{endTime}
+			]]>
+	</select>
+	
+	
+	<select id="getLuckyGiftNumForAnchor" resultType="java.lang.Long">
+			select sum(t1.number) as total from t_pay_gift_out t1 
+			inner join t_gift t2
+			on t1.giftId = t2.id
+			where t1.toUserId = #{userId}
+			and t2.giftType = 6
+			and DATE_FORMAT(resulttime,'%Y-%m-%d') = DATE_FORMAT(now(),'%Y-%m-%d')
+	</select>
+	
+	
+	<select id="getSpecialAnimationNum" resultType="java.lang.Integer">
+		select	count(*) as total 
+		from t_pay_gift_out t1
+		inner join t_gift t2
+		on t1.giftId = t2.id 
+		where t2.giftType = 6
+		and t1.number >= 66
+		and t1.userid = #{userId}
+		and DATE_FORMAT(t1.resulttime,'%Y%m') = DATE_FORMAT(CURDATE(),'%Y%m')
+	</select>
+	
+	<select id="getGiftNumForUser" resultType="java.lang.Integer">
+		SELECT sum(number) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			AND userId = #{userId}
+			<if test="anchorUserId != null and anchorUserId != ''">
+				AND toUserId = #{anchorUserId}
+			</if>
+			
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			AND giftId in
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+	</select>
+	
+	<select id="getGiftNumForAnchor" resultType="java.lang.Integer">
+		SELECT sum(number) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			AND toUserId = #{userId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			AND giftId in
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+	</select>
+	
+	<select id="getGiftListForAnchor" resultType="java.util.Map">
+		select giftid as giftId,sum(number) as total from t_pay_gift_out  
+		where 1=1
+		AND toUserId = #{userId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+		AND giftId in
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		group by giftid
+	</select>
+	
+	<select id="getUserGiftSumList" resultType="java.util.Map">
+		select  userid as userId,sum(number) as total from t_pay_gift_out  
+		where 1=1
+		AND toUserid = #{anchorUserId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+		and giftId in
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		group by userid
+	</select>
+	
+	
+	<select id="getGiftNumForAnchorByGiftId" resultType="java.lang.Integer">
+		select sum(number) as total from t_pay_gift_out  
+		where 1=1
+		AND toUserId = #{userId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+		and giftId = #{giftId}
+	</select>
+	
+	
+	<select id="getAllGiftSumForAnchor" resultType="java.util.Map">
+		select  toUserId as toUserId,sum(number) as total from t_pay_gift_out  
+		where 1=1
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+		and giftId in
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+		</foreach>
+		group by toUserId
+	</select>
+	
+	
+	<select id="getAllGiftSumForUser" resultType="java.util.Map">
+		select userid as userId,sum(number) as total from t_pay_gift_out  
+		where 1=1
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+		and giftId in
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+		</foreach>
+		group by userid
+	</select>
+	
+	
+	<select id="getGiftNumByGiftIdForAnchor" resultType="java.lang.Integer">
+		select sum(number) as total from t_pay_gift_out  
+		where 1=1
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+		and toUserId = #{anchorUserId}
+		and giftId = #{giftId}
+	</select>
+	
+	
+	<select id="getGiftNumByGiftIdForUser" resultType="java.lang.Integer">
+		select sum(number) as total from t_pay_gift_out  
+		where 1=1
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+		and toUserId = #{anchorUserId}
+		and userId = #{userId}
+		and giftId = #{giftId}
+	</select>
+	
+	
+	<select id="getUserGiftSumByGiftId" resultType="java.util.Map">
+		select  userid as userId,sum(number) as total from t_pay_gift_out  
+		where 1=1
+		AND toUserid = #{anchorUserId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+		and giftId = #{giftId}
+		group by userid
+	</select>
+	
+	<select id="getGiftNumByGiftIdForAllAnchor" resultType="java.util.Map">
+		select  toUserid as toUserId,sum(number) as total from t_pay_gift_out  
+		where 1=1
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+		and giftId = #{giftId}
+		group by toUserid
+	</select>
+	
+	
+	<!-- 统计房间所有守护用户收礼总金币，按用户分组 -->
+	<select id="getGuardUserRoomRecGoldForActivity" resultType="java.util.HashMap">
+		SELECT userId,sum(price) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			AND toUserId = #{toUserId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			AND  userid in 
+			(SELECT userid from t_guard_work WHERE roomId = #{roomId}
+			<![CDATA[
+			AND (isPeriod = 0 or (isPeriod = 1 and endTime >= #{beginTime})) group by userid) 
+			]]> 
+			GROUP BY userId
+	</select>
+	
+	<!-- 统计用户对各主播送礼总金币，按主播分组 -->
+	<select id="getUserRecGoldForActivity" resultType="java.util.HashMap">
+		SELECT toUserId, sum(price) AS total
+			FROM
+ 			t_pay_gift_out 
+			WHERE 1=1
+			AND userId = #{userId}
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			GROUP BY toUserId
+	</select>
+	
+	<select id="getAnchorGiftSumForWoods"  resultType="java.util.HashMap">
+			select toUserid as userId,sum(number) as total from t_pay_gift_out  
+			where 1=1
+			<![CDATA[
+				AND resultTime >= #{beginTime} 
+				AND resultTime <= #{endTime}
+			]]>
+			and giftId in
+			<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+			group by toUserid
+			having total >=10
+	</select>
+	
+</mapper>

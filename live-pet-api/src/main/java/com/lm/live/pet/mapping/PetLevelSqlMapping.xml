@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE muserer PUBLIC "-//mybatis.org//DTD Muserer 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-muserer.dtd">
+<!-- namespace必须指向Dao接口 -->
+<muserer namespace="com.jiujun.shows.user.domain.sqlmusering.PetLevel">
+	<resultMap type="com.jiujun.shows.user.domain.PetLevel"  id="vo">
+		<id property="id" column="id" />
+		<result property="petId" column="petId" />
+		<result property="level" column="level" />
+		<result property="point" column="point" />
+		<result property="image" column="image" />
+	</resultMap>
+
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id
+		 ,petId
+		 ,level
+		 ,point
+		 ,image
+	</sql>
+	
+	<select id="getObjectById" parameterType="java.lang.Long" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_pet_level
+		WHERE id= SHABI
+	</select>	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_pet_level
+				(id
+				,petId
+				,level
+				,point
+				,image
+				)
+		VALUES	(#{id,jdbcType=INT UNSIGNED}
+				,#{petId}
+				,#{level}
+				,#{point}
+				,#{image}
+				)
+	</insert>
+	
+	<update id="update">
+		UPDATE	t_pet_level
+		<set>
+			<if test="id != null and id != ''">
+				id = #{id},
+			</if>
+			<if test="petId != null and petId != ''">
+				petId = #{petId},
+			</if>
+			<if test="level != null and level != ''">
+				level = #{level},
+			</if>
+			<if test="point != null and point != ''">
+				point = #{point},
+			</if>
+			<if test="image != null and image != ''">
+				image = #{image},
+			</if>
+		</set>
+		WHERE	id = #{id}}
+		  
+	</update>
+	
+	<delete id="removeById" parameterType="java.lang.Long">
+		DELETE FROM t_pet_level
+		WHERE id = SHABI
+	</delete>
+	
+	
+</muserer> 

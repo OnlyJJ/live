@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.car.dao.CarParkIncomeConfMapper">
+	<resultMap type="com.jiujun.shows.car.domain.CarParkIncomeConf" id="vo">
+	    <result property="id" column="id" />
+	    <result property="carId" column="carId" />
+	    <result property="parkTime" column="parkTime" />
+	    <result property="receiveGold" column="receiveGold" />
+	</resultMap>
+
+	<select id="getParkTimeByCarId" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_car_park_income_conf where carId=#{carId} 
+	</select>
+	
+	<select id="getCarParkIncomeConfByCarId" resultMap="vo">
+		select * from t_car_park_income_conf where carId=#{carId}
+	</select>
+	
+	
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_car_park_income_conf(
+			id,
+			carId,
+			parkTime,
+			receiveGold,
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{carId,jdbcType=VARCHAR},
+			#{parkTime,jdbcType=VARCHAR},
+			#{receiveGold,jdbcType=VARCHAR}
+		)	
+		]]>
+	  </insert>
+	  
+	   <update id="update">
+		UPDATE t_car_park_income_record
+			<set>
+			 	<if test="carId != null">
+					<![CDATA[carId = #{carId},  ]]>
+				</if> 	
+				<if test="parkTime != null">
+					 <![CDATA[ parkTime = #{parkTime},  ]]>
+				</if>	
+				<if test="receiveGold != null">
+					 <![CDATA[ receiveGold = #{receiveGold},  ]]>
+				</if>	
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id} ]]>  			  	
+			</where>  
+	  </update>	
+</mapper>

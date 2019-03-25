@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE muserer PUBLIC "-//mybatis.org//DTD Muserer 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-muserer.dtd">
+<!-- namespace必须指向Dao接口 -->
+<muserer namespace="com.jiujun.shows.user.domain.sqlmusering.PetConf">
+	<resultMap type="com.jiujun.shows.user.domain.PetConf"  id="vo">
+		<id property="id" column="id" />
+		<result property="petName" column="petName" />
+		<result property="hatchTime" column="hatchTime" />
+		<result property="natureId" column="natureId" />
+		<result property="vaild" column="vaild" />
+	</resultMap>
+
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id
+		 ,petName
+		 ,hatchTime
+		 ,natureId
+		 ,vaild
+	</sql>
+	
+	<select id="getObjectById" parameterType="java.lang.Long" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_pet_conf
+		WHERE id= SHABI
+	</select>	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_pet_conf
+				(id
+				,petName
+				,hatchTime
+				,natureId
+				,vaild
+				)
+		VALUES	(#{id,jdbcType=INT UNSIGNED}
+				,#{petName}
+				,#{hatchTime}
+				,#{natureId}
+				,#{vaild}
+				)
+	</insert>
+	
+	<update id="update">
+		UPDATE	t_pet_conf
+		<set>
+			<if test="id != null and id != ''">
+				id = #{id},
+			</if>
+			<if test="petName != null and petName != ''">
+				petName = #{petName},
+			</if>
+			<if test="hatchTime != null and hatchTime != ''">
+				hatchTime = #{hatchTime},
+			</if>
+			<if test="natureId != null and natureId != ''">
+				natureId = #{natureId},
+			</if>
+			<if test="vaild != null and vaild != ''">
+				vaild = #{vaild},
+			</if>
+		</set>
+		WHERE	id = #{id}}
+		  
+	</update>
+	
+	<delete id="removeById" parameterType="java.lang.Long">
+		DELETE FROM t_pet_conf
+		WHERE id = SHABI
+	</delete>
+	
+	
+</muserer> 

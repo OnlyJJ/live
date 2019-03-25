@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.app.apple.domain.sqlmapping.ApplePayRecord">
+	<resultMap type="com.jiujun.shows.app.apple.domain.ApplePayRecordDo" id="vo">
+	    <result property="id" column="id" />
+	    <result property="productId" column="productId" />
+	    <result property="quantity" column="quantity" />
+	    <result property="transactionId" column="transactionId" />
+	    <result property="purchaseDdate" column="purchaseDdate" />
+	    <result property="dataXml" column="dataXml" />
+	    <result property="recordTime" column="recordTime" />
+	     <result property="userId" column="userId" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_apple_pay_record where id=#{id}
+	</select>
+	
+	<select id="getObjectByTransactionId" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_apple_pay_record where transactionId=#{transactionId}
+	</select>
+	
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from t_apple_pay_record where id = #{id}
+	</delete>
+	
+	<delete id="removeByIds" >
+		delete from t_apple_pay_record where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>	
+	
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_apple_pay_record where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>	
+
+	<select id="getListByPage"  resultMap="vo">
+		select * from t_apple_pay_record 
+	<where>
+	 	<if test="productId != null and productId != ''">
+			AND productId like '%${productId}%'
+		</if> 	
+		<if test="quantity != null">
+			AND quantity = #{quantity}
+		</if>	
+	 	<if test="transactionId != null and transactionId != ''">
+			AND transactionId like '%${transactionId}%'
+		</if> 	
+		<if test="ltPurchaseDdate != null and ltPurchaseDdate != ''">
+			<![CDATA[AND purchaseDdate >= #{ltPurchaseDdate} ]]>
+		</if> 
+		<if test="gtPurchaseDdate != null and gtPurchaseDdate != ''">
+			<![CDATA[AND purchaseDdate <= #{gtPurchaseDdate} ]]>
+		</if> 
+	 	<if test="dataXml != null and dataXml != ''">
+			AND dataXml like '%${dataXml}%'
+		</if> 	
+		<if test="ltRecordTime != null and ltRecordTime != ''">
+			<![CDATA[AND recordTime >= #{ltRecordTime} ]]>
+		</if> 
+		<if test="gtRecordTime != null and gtRecordTime != ''">
+			<![CDATA[AND recordTime <= #{gtRecordTime} ]]>
+		</if> 
+		<if test="appendWhere != null and appendWhere != ''">
+			${appendWhere}
+		</if>           
+      </where>
+        ORDER BY 
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}
+			</when>
+			<otherwise>
+				id
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="descOrAsc != null and descOrAsc != ''">
+				${descOrAsc}
+			</when>
+			<otherwise>
+				asc 
+			</otherwise>
+		</choose>
+	</select>
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_apple_pay_record(
+			id,
+			productId,
+			quantity,
+			transactionId,
+			purchaseDdate,
+			dataXml,
+			recordTime,
+			userId
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{productId,jdbcType=VARCHAR},
+			#{quantity,jdbcType=VARCHAR},
+			#{transactionId,jdbcType=VARCHAR},
+			#{purchaseDdate,jdbcType=VARCHAR},
+			#{dataXml,jdbcType=VARCHAR},
+			#{recordTime,jdbcType=VARCHAR},
+			#{userId}
+		)	
+		]]>
+	  </insert>
+	  
+	  <insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_apple_pay_record(
+			id,
+			productId,
+			quantity,
+			transactionId,
+			purchaseDdate,
+			dataXml,
+			recordTime,
+			userId
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.id,jdbcType=VARCHAR},#{item.productId,jdbcType=VARCHAR},#{item.quantity,jdbcType=VARCHAR},#{item.transactionId,jdbcType=VARCHAR},#{item.purchaseDdate,jdbcType=VARCHAR},#{item.dataXml,jdbcType=VARCHAR},#{item.recordTime,jdbcType=VARCHAR},#{item.userId,jdbcType=VARCHAR})
+		]]>
+		</foreach>
+	  </insert>
+	  
+	  <update id="update">
+		UPDATE t_apple_pay_record
+			<set>
+			 	<if test="productId != null">
+					<![CDATA[productId = #{productId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="quantity != null">
+					 <![CDATA[ quantity = #{quantity,jdbcType=VARCHAR},  ]]>
+				</if>	
+			 	<if test="transactionId != null">
+					<![CDATA[transactionId = #{transactionId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="purchaseDdate != null">
+					<![CDATA[purchaseDdate = #{purchaseDdate,jdbcType=VARCHAR},  ]]>
+				</if> 
+			 	<if test="dataXml != null">
+					<![CDATA[dataXml = #{dataXml,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="recordTime != null">
+					<![CDATA[recordTime = #{recordTime,jdbcType=VARCHAR}  ]]>
+				</if> 
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>  			  	
+			</where>  
+	  </update>	
+</mapper>

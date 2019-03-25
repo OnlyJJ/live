@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.lm.live.base.domain.sqlmapping.Province">
+	<resultMap type="com.lm.live.base.domain.Province" id="vo">
+	    <result property="id" column="id" />
+	    <result property="region" column="region" />
+	    <result property="city" column="city" />
+	    <result property="code" column="code" />
+	    <result property="postcode" column="postcode" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_province where id=#{id}
+	</select>
+	
+	<!-- 获取所有记录 -->
+	<select id="getListByAll"  resultMap="vo">
+		select * from t_province 
+	</select>
+</mapper>

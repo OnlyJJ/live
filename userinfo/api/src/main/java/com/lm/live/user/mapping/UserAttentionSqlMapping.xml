@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.lm.live.user.domain.sqlmapping.UserAttentionDo">
+	<resultMap type="com.lm.live.user.domain.UserAttentionDo" id="vo">
+	    <result property="id" column="id" />
+	    <result property="userId" column="userId" />
+	    <result property="toUserId" column="toUserId" />
+	    <result property="addTime" column="addTime" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_user_attention where id=#{id}
+	</select>
+	
+	<select id="findFansByToUserid"  resultMap="vo">
+		select * from t_user_attention where toUserId = #{toUserId}
+	</select>
+	
+	<select id="getFansounts" resultType="java.lang.Integer">
+		select count(id) from t_user_attention where toUserId = #{userId}
+	</select>
+	
+	<select id="getAttentionCounts" resultType="java.lang.Integer">
+		select count(id) from t_user_attention where userId = #{userId}
+	</select>
+	
+	
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from t_user_attention where id = #{id}
+	</delete>
+	
+	<delete id="removeByIds" >
+		delete from t_user_attention where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>	
+	
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_user_attention where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>	
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <![CDATA[
+	  INSERT INTO t_user_attention(
+			id,
+			userId,
+			toUserId,
+			addTime
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR},
+			#{toUserId,jdbcType=VARCHAR},
+			#{addTime,jdbcType=VARCHAR}
+		)	
+		]]>
+	  </insert>
+	  
+	  <insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_user_attention(
+			id,
+			userId,
+			toUserId,
+			addTime
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.id,jdbcType=VARCHAR},#{item.userId,jdbcType=VARCHAR},#{item.toUserId,jdbcType=VARCHAR},#{item.addTime,jdbcType=VARCHAR})
+		]]>
+		</foreach>
+	  </insert>
+	  
+	  <update id="update">
+		UPDATE t_user_attention
+			<set>
+			 	<if test="userId != null">
+					<![CDATA[userId = #{userId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="toUserId != null">
+					<![CDATA[toUserId = #{toUserId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="addTime != null">
+					<![CDATA[addTime = #{addTime,jdbcType=VARCHAR}  ]]>
+				</if> 
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>  			  	
+			</where>  
+	  </update>	
+	  
+</mapper>

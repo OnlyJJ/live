@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.pay.xiaolajiao.domain.sqlmapping.PayXiaolajiaoOrder">
+	<resultMap type="com.jiujun.shows.pay.xiaolajiao.domain.PayXiaolajiaoOrder" id="vo">
+	    <result property="id" column="id" />
+	    <result property="orderId" column="orderId" />
+	    <result property="productBizId" column="productBizId" />
+	    <result property="userId" column="userId" />
+	    <result property="orderStatus" column="orderStatus" />
+	    <result property="chargeTime" column="chargeTime" />
+	    <result property="resultTime" column="resultTime" />
+	    <result property="remark" column="remark" />
+	    <result property="channelId" column="channelId" />
+	    <result property="generateOrderIp" column="generateOrderIp" />
+	    <result property="generateOrderAddr" column="generateOrderAddr" />
+	    <result property="notifyIp" column="notifyIp" />
+	    <result property="notifyAddr" column="notifyAddr" />
+	    <result property="transactionId" column="transactionId" />
+	    <result property="productPackId" column="productPackId" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="int" resultMap="vo">
+		select * from t_pay_xiaolajiao_order where id=#{id}
+	</select>
+	
+	<delete id="removeById" parameterType="int">
+		delete from t_pay_xiaolajiao_order where id = #{id}
+	</delete>
+	
+	<delete id="removeByIds" >
+		delete from t_pay_xiaolajiao_order where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>	
+	
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_pay_xiaolajiao_order where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>	
+
+	<select id="getListByPage"  resultMap="vo">
+		select * from t_pay_xiaolajiao_order 
+	<where>
+	 	<if test="orderId != null and orderId != ''">
+			AND orderId like '%${orderId}%'
+		</if> 	
+	 	<if test="productBizId != null and productBizId != ''">
+			AND productBizId like '%${productBizId}%'
+		</if> 	
+	 	<if test="userId != null and userId != ''">
+			AND userId like '%${userId}%'
+		</if> 	
+		<if test="orderStatus != null">
+			AND orderStatus = #{orderStatus}
+		</if>	
+		<if test="ltChargeTime != null and ltChargeTime != ''">
+			<![CDATA[AND chargeTime >= #{ltChargeTime} ]]>
+		</if> 
+		<if test="gtChargeTime != null and gtChargeTime != ''">
+			<![CDATA[AND chargeTime <= #{gtChargeTime} ]]>
+		</if> 
+		<if test="ltResultTime != null and ltResultTime != ''">
+			<![CDATA[AND resultTime >= #{ltResultTime} ]]>
+		</if> 
+		<if test="gtResultTime != null and gtResultTime != ''">
+			<![CDATA[AND resultTime <= #{gtResultTime} ]]>
+		</if> 
+	 	<if test="remark != null and remark != ''">
+			AND remark like '%${remark}%'
+		</if> 	
+	 	<if test="channelId != null and channelId != ''">
+			AND channelId like '%${channelId}%'
+		</if> 	
+	 	<if test="generateOrderIp != null and generateOrderIp != ''">
+			AND generateOrderIp like '%${generateOrderIp}%'
+		</if> 	
+	 	<if test="generateOrderAddr != null and generateOrderAddr != ''">
+			AND generateOrderAddr like '%${generateOrderAddr}%'
+		</if> 	
+	 	<if test="notifyIp != null and notifyIp != ''">
+			AND notifyIp like '%${notifyIp}%'
+		</if> 	
+	 	<if test="notifyAddr != null and notifyAddr != ''">
+			AND notifyAddr like '%${notifyAddr}%'
+		</if> 	
+	 	<if test="transactionId != null and transactionId != ''">
+			AND transactionId like '%${transactionId}%'
+		</if> 	
+		<if test="appendWhere != null and appendWhere != ''">
+			${appendWhere}
+		</if>           
+      </where>
+        ORDER BY 
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}
+			</when>
+			<otherwise>
+				id
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="descOrAsc != null and descOrAsc != ''">
+				${descOrAsc}
+			</when>
+			<otherwise>
+				asc 
+			</otherwise>
+		</choose>
+	</select>
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_pay_xiaolajiao_order(
+			id,
+			orderId,
+			productBizId,
+			productPackId,
+			userId,
+			orderStatus,
+			chargeTime,
+			resultTime,
+			remark,
+			channelId,
+			generateOrderIp,
+			generateOrderAddr,
+			notifyIp,
+			notifyAddr,
+			transactionId
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{orderId,jdbcType=VARCHAR},
+			#{productBizId,jdbcType=VARCHAR},
+			#{productPackId,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR},
+			#{orderStatus,jdbcType=VARCHAR},
+			#{chargeTime,jdbcType=VARCHAR},
+			#{resultTime,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR},
+			#{channelId,jdbcType=VARCHAR},
+			#{generateOrderIp,jdbcType=VARCHAR},
+			#{generateOrderAddr,jdbcType=VARCHAR},
+			#{notifyIp,jdbcType=VARCHAR},
+			#{notifyAddr,jdbcType=VARCHAR},
+			#{transactionId,jdbcType=VARCHAR}
+		)	
+		]]>
+	  </insert>
+	  
+	  <insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_pay_xiaolajiao_order(
+			id,
+			orderId,
+			productBizId,
+			productPackId,
+			userId,
+			orderStatus,
+			chargeTime,
+			resultTime,
+			remark,
+			channelId,
+			generateOrderIp,
+			generateOrderAddr,
+			notifyIp,
+			notifyAddr,
+			transactionId
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.id,jdbcType=VARCHAR},#{item.orderId,jdbcType=VARCHAR},#{item.productBizId,jdbcType=VARCHAR},#{item.productPackId,jdbcType=VARCHAR},#{item.userId,jdbcType=VARCHAR},#{item.orderStatus,jdbcType=VARCHAR},#{item.chargeTime,jdbcType=VARCHAR},#{item.resultTime,jdbcType=VARCHAR},#{item.remark,jdbcType=VARCHAR},#{item.channelId,jdbcType=VARCHAR},#{item.generateOrderIp,jdbcType=VARCHAR},#{item.generateOrderAddr,jdbcType=VARCHAR},#{item.notifyIp,jdbcType=VARCHAR},#{item.notifyAddr,jdbcType=VARCHAR},#{item.transactionId,jdbcType=VARCHAR})
+		]]>
+		</foreach>
+	  </insert>
+	  
+	  <update id="update">
+		UPDATE t_pay_xiaolajiao_order
+			<set>
+			 	<if test="orderId != null">
+					<![CDATA[orderId = #{orderId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="productBizId != null">
+					<![CDATA[productBizId = #{productBizId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="productPackId != null">
+					<![CDATA[productPackId = #{productPackId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="userId != null">
+					<![CDATA[userId = #{userId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="orderStatus != null">
+					 <![CDATA[ orderStatus = #{orderStatus,jdbcType=VARCHAR},  ]]>
+				</if>	
+				<if test="chargeTime != null">
+					<![CDATA[chargeTime = #{chargeTime,jdbcType=VARCHAR},  ]]>
+				</if> 
+				<if test="resultTime != null">
+					<![CDATA[resultTime = #{resultTime,jdbcType=VARCHAR},  ]]>
+				</if> 
+			 	<if test="remark != null">
+					<![CDATA[remark = #{remark,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="channelId != null">
+					<![CDATA[channelId = #{channelId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="generateOrderIp != null">
+					<![CDATA[generateOrderIp = #{generateOrderIp,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="generateOrderAddr != null">
+					<![CDATA[generateOrderAddr = #{generateOrderAddr,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="notifyIp != null">
+					<![CDATA[notifyIp = #{notifyIp,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="notifyAddr != null">
+					<![CDATA[notifyAddr = #{notifyAddr,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="transactionId != null">
+					<![CDATA[transactionId = #{transactionId,jdbcType=VARCHAR}  ]]>
+				</if> 	
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>  			  	
+			</where>  
+	  </update>	
+	  
+	  <select id="getByOrderId" parameterType="int" resultMap="vo">
+		select * from t_pay_xiaolajiao_order where orderId=#{orderId}
+	</select>
+</mapper>

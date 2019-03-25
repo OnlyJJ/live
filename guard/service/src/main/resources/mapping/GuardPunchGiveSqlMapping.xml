@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.guard.domain.sqlmapping.GuardPunchGive">
+	<resultMap type="com.jiujun.shows.guard.domain.GuardPunchGive" id="vo">
+	    <result property="id" column="id" />
+	    <result property="type" column="type" />
+	    <result property="payHisId" column="payHisId" />
+	    <result property="workId" column="workId" />
+	    <result property="userId" column="userId" />
+	    <result property="roomId" column="roomId" />
+	    <result property="beginTime" column="beginTime" />
+	    <result property="endTime" column="endTime" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="int" resultMap="vo">
+		select * from t_guard_punch_give where id=#{id}
+	</select>
+	
+	<select id="getGuardPunchGiveData" resultMap="vo">
+		select * from t_guard_punch_give where userId=#{userId} AND roomId=#{roomId}
+	</select>
+	
+	<select id="getGiveDataByPayhisId" resultMap="vo">
+		select * from t_guard_punch_give where payHisId=#{payHisId}
+	</select>
+	
+	
+	
+	<insert id="insert">
+		INSERT INTO t_guard_punch_give(
+			type,
+			payHisId,
+			workId,
+			userId,
+			roomId,
+			beginTime,
+			endTime
+		) VALUES (
+			#{type,jdbcType=VARCHAR},
+			#{payHisId,jdbcType=VARCHAR},
+			#{workId,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR},
+			#{roomId,jdbcType=VARCHAR},
+			#{beginTime,jdbcType=VARCHAR},
+			#{endTime,jdbcType=VARCHAR}
+		)
+	</insert>
+</mapper>

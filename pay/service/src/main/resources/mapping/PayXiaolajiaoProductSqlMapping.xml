@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.pay.xiaolajiao.domain.sqlmapping.PayXiaolajiaoProduct">
+	<resultMap type="com.jiujun.shows.pay.xiaolajiao.domain.PayXiaolajiaoProduct" id="vo">
+	    <result property="id" column="id" />
+	    <result property="chargeType" column="chargeType" />
+	    <result property="order" column="order" />
+	    <result property="productName" column="productName" />
+	    <result property="spendMoneyFen" column="spendMoneyFen" />
+	    <result property="getGold" column="getGold" />
+	    <result property="getDecorateId" column="getDecorateId" />
+	    <result property="getToolId" column="getToolId" />
+	    <result property="getCarId" column="getCarId" />
+	    <result property="productComment" column="productComment" />
+	    <result property="productBizName" column="productBizName" />
+	    <result property="productBizId" column="productBizId" />
+	    <result property="productPackId" column="productPackId" />
+	    <result property="inUse" column="inUse" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_pay_xiaolajiao_product where id=#{id}
+	</select>
+	
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from t_pay_xiaolajiao_product where id = #{id}
+	</delete>
+	
+	<delete id="removeByIds" >
+		delete from t_pay_xiaolajiao_product where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>	
+	
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_pay_xiaolajiao_product where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>	
+
+	<select id="getListByPage"  resultMap="vo">
+		select * from t_pay_xiaolajiao_product 
+	<where>
+		<if test="chargeType != null">
+			AND chargeType = #{chargeType}
+		</if>	
+		<if test="order != null">
+			AND order = #{order}
+		</if>	
+	 	<if test="productName != null and productName != ''">
+			AND productName like '%${productName}%'
+		</if> 	
+		<if test="spendMoneyFen != null">
+			AND spendMoneyFen = #{spendMoneyFen}
+		</if>	
+		<if test="getGold != null">
+			AND getGold = #{getGold}
+		</if>	
+		<if test="getDecorateId != null">
+			AND getDecorateId = #{getDecorateId}
+		</if>	
+		<if test="getToolId != null">
+			AND getToolId = #{getToolId}
+		</if>	
+		<if test="getCarId != null">
+			AND getCarId = #{getCarId}
+		</if>	
+	 	<if test="productComment != null and productComment != ''">
+			AND productComment like '%${productComment}%'
+		</if> 	
+	 	<if test="productBizName != null and productBizName != ''">
+			AND productBizName like '%${productBizName}%'
+		</if> 	
+	 	<if test="productBizId != null and productBizId != ''">
+			AND productBizId like '%${productBizId}%'
+		</if> 	
+		<if test="inUse != null">
+			AND inUse = #{inUse}
+		</if>	
+		<if test="appendWhere != null and appendWhere != ''">
+			${appendWhere}
+		</if>           
+      </where>
+        ORDER BY 
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}
+			</when>
+			<otherwise>
+				id
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="descOrAsc != null and descOrAsc != ''">
+				${descOrAsc}
+			</when>
+			<otherwise>
+				asc 
+			</otherwise>
+		</choose>
+	</select>
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_pay_xiaolajiao_product(
+			id,
+			chargeType,
+			order,
+			productName,
+			spendMoneyFen,
+			getGold,
+			getDecorateId,
+			getToolId,
+			getCarId,
+			productComment,
+			productBizName,
+			productBizId,
+			productPackId,
+			inUse
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{chargeType,jdbcType=VARCHAR},
+			#{order,jdbcType=VARCHAR},
+			#{productName,jdbcType=VARCHAR},
+			#{spendMoneyFen,jdbcType=VARCHAR},
+			#{getGold,jdbcType=VARCHAR},
+			#{getDecorateId,jdbcType=VARCHAR},
+			#{getToolId,jdbcType=VARCHAR},
+			#{getCarId,jdbcType=VARCHAR},
+			#{productComment,jdbcType=VARCHAR},
+			#{productBizName,jdbcType=VARCHAR},
+			#{productBizId,jdbcType=VARCHAR},
+			#{productPackId,jdbcType=VARCHAR},
+			#{inUse,jdbcType=VARCHAR}
+		)	
+		]]>
+	  </insert>
+	  
+	  <insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_pay_xiaolajiao_product(
+			id,
+			chargeType,
+			order,
+			productName,
+			spendMoneyFen,
+			getGold,
+			getDecorateId,
+			getToolId,
+			getCarId,
+			productComment,
+			productBizName,
+			productBizId,
+			inUse
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.id,jdbcType=VARCHAR},#{item.chargeType,jdbcType=VARCHAR},#{item.order,jdbcType=VARCHAR},#{item.productName,jdbcType=VARCHAR},#{item.spendMoneyFen,jdbcType=VARCHAR},#{item.getGold,jdbcType=VARCHAR},#{item.getDecorateId,jdbcType=VARCHAR},#{item.getToolId,jdbcType=VARCHAR},#{item.getCarId,jdbcType=VARCHAR},#{item.productComment,jdbcType=VARCHAR},#{item.productBizName,jdbcType=VARCHAR},#{item.productBizId,jdbcType=VARCHAR},#{item.inUse,jdbcType=VARCHAR})
+		]]>
+		</foreach>
+	  </insert>
+	  
+	  <update id="update">
+		UPDATE t_pay_xiaolajiao_product
+			<set>
+				<if test="chargeType != null">
+					 <![CDATA[ chargeType = #{chargeType,jdbcType=VARCHAR},  ]]>
+				</if>	
+				<if test="order != null">
+					 <![CDATA[ order = #{order,jdbcType=VARCHAR},  ]]>
+				</if>	
+			 	<if test="productName != null">
+					<![CDATA[productName = #{productName,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="spendMoneyFen != null">
+					 <![CDATA[ spendMoneyFen = #{spendMoneyFen,jdbcType=VARCHAR},  ]]>
+				</if>	
+				<if test="getGold != null">
+					 <![CDATA[ getGold = #{getGold,jdbcType=VARCHAR},  ]]>
+				</if>	
+				<if test="getDecorateId != null">
+					 <![CDATA[ getDecorateId = #{getDecorateId,jdbcType=VARCHAR},  ]]>
+				</if>	
+				<if test="getToolId != null">
+					 <![CDATA[ getToolId = #{getToolId,jdbcType=VARCHAR},  ]]>
+				</if>	
+				<if test="getCarId != null">
+					 <![CDATA[ getCarId = #{getCarId,jdbcType=VARCHAR},  ]]>
+				</if>	
+			 	<if test="productComment != null">
+					<![CDATA[productComment = #{productComment,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="productBizName != null">
+					<![CDATA[productBizName = #{productBizName,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="productBizId != null">
+					<![CDATA[productBizId = #{productBizId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="productPackId != null">
+					<![CDATA[productPackId = #{productPackId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="inUse != null">
+					 <![CDATA[ inUse = #{inUse,jdbcType=VARCHAR}  ]]>
+				</if>	
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>  			  	
+			</where>  
+	  </update>	
+	  
+	  <select id="getByProductBizId" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_pay_xiaolajiao_product where productBizId=#{productBizId} limit 1
+	  </select>
+	  
+	  <select id="getByProductPackId" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_pay_xiaolajiao_product where productPackId=#{productPackId} limit 1
+	  </select>
+</mapper>

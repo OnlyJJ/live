@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.guard.domain.sqlmapping.GuardConf">
+	<resultMap type="com.jiujun.shows.guard.domain.GuardConf" id="vo">
+	    <result property="id" column="id" />
+	    <result property="name" column="name" />
+	    <result property="image" column="image" />
+	    <result property="level" column="level" />
+	    <result property="price" column="price" />
+	    <result property="priceRMB" column="priceRMB" />
+	    <result property="validate" column="validate" />
+	    <result property="rate" column="rate" />
+	    <result property="diamond" column="diamond" />
+	    <result property="userPoint" column="userPoint" />
+	    <result property="anchorPoint" column="anchorPoint" />
+	    <result property="guardType" column="guardType" />
+	    <result property="priceType" column="priceType" />
+	    <result property="isPeriod" column="isPeriod" />
+	    <result property="isUse" column="isUse" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="int" resultMap="vo">
+		select * from t_guard_conf where id=#{id}
+	</select>
+	
+	<select id="getGuardConfByCondition"  resultMap="vo">
+		select * from t_guard_conf where guardType=#{guardType} AND priceType=#{priceType}
+	</select>
+	
+	<select id="getGuardConfAllData"  resultMap="vo">
+		select * from t_guard_conf where isUse = 1;
+	</select>
+	
+</mapper>

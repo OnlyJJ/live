@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.lm.live.pay.domain.sqlmapping.PayChargeOrder">
+	<resultMap type="com.lm.live.pay.domain.PayChargeOrder" id="vo">
+	    <result property="id" column="id" />
+	    <result property="orderId" column="orderId" />
+	    <result property="pay_type" column="pay_type" />
+	    <result property="userId" column="userId" />
+	    <result property="orderStatus" column="orderStatus" />
+	    <result property="selectMoney" column="selectMoney" />
+	    <result property="money" column="money" />
+	    <result property="chargeTime" column="chargeTime" />
+	    <result property="resultTime" column="resultTime" />
+	    <result property="remark" column="remark" />
+	    <result property="syncTime" column="syncTime" />
+	    <result property="golds" column="golds" />
+	    <result property="userAccount" column="userAccount" />
+	    <result property="bindEmail" column="bindEmail" />
+	    <result property="bindMobile" column="bindMobile" />
+	    <result property="payTypeName" column="payTypeName" />
+	    <result property="createType" column="createType" />
+	    <result property="channelId" column="channelId" />
+	    <result property="isPayBySanBox" column="isPayBySanBox" />
+	    <result property="agentUserId" column="agentUserId" />
+	    <result property="generateOrderIp" column="generateOrderIp" />
+	    <result property="generateOrderAddr" column="generateOrderAddr" />
+	    <result property="paySuccessNotifyIp" column="paySuccessNotifyIp" />
+	    <result property="paySuccessNotifyAddr" column="paySuccessNotifyAddr" />
+	    <result property="transactionId" column="transactionId" />
+	    <result property="pkgName" column="pkgName" />
+	    <result property="douId" column="douId" />
+	    <result property="retentionVaild" column="retentionVaild" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_pay_charge_order where id=#{id}
+	</select>
+	
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from t_pay_charge_order where id = #{id}
+	</delete>
+	
+	<delete id="removeByIds" >
+		delete from t_pay_charge_order where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>	
+	
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_pay_charge_order where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>	
+
+	<select id="getListByPage"  resultMap="vo">
+		select a.*,b.bindEmail,b.userAccount,b.bindMobile,c.name as payTypeName from t_pay_charge_order a
+		inner join t_user_info b on( a.userId = b.userId and b.userStatus=1)
+		inner join t_pay_charge_order c on( a.pay_type = c.id and c.isUse=1)
+	<where>
+	 	<if test="orderId != null and orderId != ''">
+			AND a.orderId like '%${orderId}%'
+		</if> 	
+		<if test="pay_type != null">
+			AND a.pay_type = #{pay_type}
+		</if>	 	
+	 	<if test="orderStatus != null and orderStatus != ''">
+			AND a.orderStatus = #{orderStatus}
+		</if> 	
+		<if test="selectMoney != null">
+			AND a.selectMoney = #{selectMoney}
+		</if>	
+		<if test="money != null">
+			AND a.money = #{money}
+		</if>	
+	 	<if test="chargeTime != null and chargeTime != ''">
+			AND a.chargeTime like '%${chargeTime}%'
+		</if> 	
+	 	<if test="resultTime != null and resultTime != ''">
+			AND a.resultTime like '%${resultTime}%'
+		</if> 	
+	 	<if test="remark != null and remark != ''">
+			AND a.remark like '%${remark}%'
+		</if> 	
+	 	<if test="syncTime != null and syncTime != ''">
+			AND a.syncTime like '%${syncTime}%'
+		</if> 	
+		<if test="golds != null">
+			AND a.golds = #{golds}
+		</if>
+		<if test="startTime != null and startTime != ''">
+			AND a.chargeTime >= #{startTime}
+		</if>
+		<if test="endTime != null and endTime != ''">
+			AND a.chargeTime <![CDATA[<=]]> #{endTime}
+		</if>
+		<if test="code != null and code != ''">
+			AND (b.userAccount like '%${code}%' OR 
+				b.bindMobile like '%${code}%' OR
+				b.bindEmail like '%${code}%' OR
+				a.userId like '%${code}%' )
+		</if>
+		<if test="appendWhere != null and appendWhere != ''">
+			${appendWhere}
+		</if>           
+      </where>
+        ORDER BY 
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}
+			</when>
+			<otherwise>
+				a.id
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="descOrAsc != null and descOrAsc != ''">
+				${descOrAsc}
+			</when>
+			<otherwise>
+				asc 
+			</otherwise>
+		</choose>
+	</select>
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_pay_charge_order(
+			id,
+			orderId,
+			pay_type,
+			userId,
+			orderStatus,
+			selectMoney,
+			money,
+			chargeTime,
+			resultTime,
+			remark,
+			syncTime,
+			golds,
+			createType,
+			channelId,
+			isPayBySanBox,
+			agentUserId,
+			generateOrderIp,
+			generateOrderAddr,
+			paySuccessNotifyIp,
+			paySuccessNotifyAddr,
+			transactionId,
+			pkgName,
+			douId,
+			retentionVaild
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{orderId,jdbcType=VARCHAR},
+			#{pay_type,jdbcType=INTEGER},
+			#{userId,jdbcType=VARCHAR},
+			#{orderStatus,jdbcType=INTEGER},
+			#{selectMoney,jdbcType=INTEGER},
+			#{money,jdbcType=INTEGER},
+			#{chargeTime,jdbcType=VARCHAR},
+			#{resultTime,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR},
+			#{syncTime,jdbcType=VARCHAR},
+			#{golds,jdbcType=INTEGER},
+			#{createType , jdbcType= INTEGER},
+			#{channelId,jdbcType=VARCHAR},
+			#{isPayBySanBox},
+			#{agentUserId},
+			#{generateOrderIp},
+			#{generateOrderAddr},
+			#{paySuccessNotifyIp},
+			#{paySuccessNotifyAddr},
+			#{transactionId},
+			#{pkgName},
+			#{douId},
+			#{retentionVaild}
+		)	
+		]]>
+	  </insert>
+	  
+	  <insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_pay_charge_order(
+			id,
+			orderId,
+			pay_type,
+			userId,
+			orderStatus,
+			selectMoney,
+			money,
+			chargeTime,
+			resultTime,
+			remark,
+			syncTime,
+			golds,
+			createType,
+			channelId,
+			isPayBySanBox,
+			agentUserId,
+			generateOrderIp,
+			generateOrderAddr,
+			paySuccessNotifyIp,
+			paySuccessNotifyAddr,
+			transactionId,
+			pkgName,
+			douId,
+			retentionVaild
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.id,jdbcType=VARCHAR},#{item.orderId,jdbcType=VARCHAR},#{item.pay_type,jdbcType=INTEGER},#{item.userId,jdbcType=VARCHAR},#{item.orderStatus,jdbcType=INTEGER},#{item.selectMoney,jdbcType=INTEGER},#{item.money,jdbcType=INTEGER},#{item.chargeTime,jdbcType=VARCHAR},#{item.resultTime,jdbcType=VARCHAR},#{item.remark,jdbcType=VARCHAR},#{item.syncTime,jdbcType=VARCHAR},#{item.golds,jdbcType=INTEGER},#{item.createType,jdbcType=INTEGER},#{item.channelId,jdbcType=VARCHAR},#{item.isPayBySanBox,jdbcType=VARCHAR},#{item.agentUserId,jdbcType=VARCHAR},#{item.generateOrderIp,jdbcType=VARCHAR},#{item.generateOrderAddr,jdbcType=VARCHAR},#{item.paySuccessNotifyIp,jdbcType=VARCHAR},#{item.paySuccessNotifyAddr,jdbcType=VARCHAR},#{item.transactionId,jdbcType=VARCHAR},#{pkgName},
+			#{douId},
+			#{retentionVaild})
+		]]>
+		</foreach>
+	  </insert>
+	  
+	  <update id="update">
+		UPDATE t_pay_charge_order
+			<set>
+			 	<if test="orderStatus != null">
+					<![CDATA[orderStatus = #{orderStatus,jdbcType=INTEGER},  ]]>
+				</if> 	
+			 	<if test="resultTime != null">
+					<![CDATA[resultTime = #{resultTime,jdbcType=VARCHAR},  ]]>
+				</if>
+				<if test="money != null">
+					<![CDATA[money = #{money,jdbcType=INTEGER},  ]]>
+				</if> 		 		
+				<if test="golds != null">
+					 <![CDATA[ golds = #{golds,jdbcType=INTEGER} , ]]>
+				</if>	
+				<if test="generateOrderIp != null">
+					 <![CDATA[ generateOrderIp = #{generateOrderIp} , ]]>
+				</if>
+				<if test="generateOrderAddr != null">
+					 <![CDATA[ generateOrderAddr = #{generateOrderAddr} , ]]>
+				</if>	
+				<if test="paySuccessNotifyIp != null">
+					 <![CDATA[ paySuccessNotifyIp = #{paySuccessNotifyIp} , ]]>
+				</if>
+				<if test="paySuccessNotifyAddr != null">
+					 <![CDATA[ paySuccessNotifyAddr = #{paySuccessNotifyAddr} , ]]>
+				</if>	
+				<if test="transactionId != null">
+					 <![CDATA[ transactionId = #{transactionId} , ]]>
+				</if>	
+				
+				<if test="remark != null">
+					 <![CDATA[ remark = #{remark},  ]]>
+				</if>	
+				<if test="pkgName != null">
+					 <![CDATA[ pkgName = #{pkgName},  ]]>
+				</if>	
+				<if test="douId != null">
+					 <![CDATA[ douId = #{douId},  ]]>
+				</if>	
+				<if test="retentionVaild != null">
+					 <![CDATA[ retentionVaild = #{retentionVaild},  ]]>
+				</if>	
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>  			  	
+			</where>  
+	  </update>	
+	  
+	  <select id="getOrderByOrderId" parameterType="java.lang.String" resultMap="vo">
+	  	select * from t_pay_charge_order where orderId = #{orderId} LIMIT 1
+	  </select>
+	   <select id="getSuccessOrderByOutTradeNo"  resultMap="vo">
+	  	select * from t_pay_charge_order where orderId = #{orderId} and orderStatus = 4
+	  </select>
+	  
+	   <select id="sumUserChargeTotal"  resultType="java.lang.Integer">
+		  	select sum(a.money) from t_pay_charge_order a
+		  	where a.orderStatus=4 
+		  	and userId = #{userId} 
+		  	<![CDATA[  and resultTime >= #{beginTime} ]]>  
+		  	<![CDATA[  and resultTime <= #{endTime} ]]>  
+	  </select>
+	  
+	  <select id="getTotalChargeMoneyByUserId" resultType="java.lang.Integer">
+		SELECT SUM(a.money) FROM t_pay_charge_order a WHERE a.userId=#{userId} AND a.orderStatus=4;
+	 </select>
+	 
+	 <select id="findChargSuccessTimes" parameterType="java.lang.String" resultType="java.lang.Integer">
+	  	select count(*) 
+	  	from t_pay_charge_order
+	  	where userId = #{userId} 
+	  	and orderStatus = 4
+	  </select>
+	  
+	  <select id="getPcoByTransactionId" parameterType="java.lang.String" resultMap="vo">
+	  	select * from t_pay_charge_order where transactionId = #{transactionId} limit 1
+	  </select>
+	  
+	   <update id="updateFail">
+		UPDATE t_pay_charge_order
+			<set>
+			 	<if test="orderStatus != null">
+					<![CDATA[orderStatus = #{orderStatus,jdbcType=INTEGER},  ]]>
+				</if> 	
+			 	<if test="resultTime != null">
+					<![CDATA[resultTime = #{resultTime,jdbcType=VARCHAR},  ]]>
+				</if>
+				<if test="money != null">
+					<![CDATA[money = #{money,jdbcType=INTEGER},  ]]>
+				</if> 		 		
+				<if test="golds != null">
+					 <![CDATA[ golds = #{golds,jdbcType=INTEGER} , ]]>
+				</if>	
+				<if test="generateOrderIp != null">
+					 <![CDATA[ generateOrderIp = #{generateOrderIp} , ]]>
+				</if>
+				<if test="generateOrderAddr != null">
+					 <![CDATA[ generateOrderAddr = #{generateOrderAddr} , ]]>
+				</if>	
+				<if test="paySuccessNotifyIp != null">
+					 <![CDATA[ paySuccessNotifyIp = #{paySuccessNotifyIp} , ]]>
+				</if>
+				<if test="paySuccessNotifyAddr != null">
+					 <![CDATA[ paySuccessNotifyAddr = #{paySuccessNotifyAddr} , ]]>
+				</if>	
+				<if test="transactionId != null">
+					 <![CDATA[ transactionId = #{transactionId} , ]]>
+				</if>	
+				
+				<if test="remark != null">
+					 <![CDATA[ remark = #{remark},  ]]>
+				</if>	
+				<if test="pkgName != null">
+					 <![CDATA[ pkgName = #{pkgName},  ]]>
+				</if>	
+				<if test="douId != null">
+					 <![CDATA[ douId = #{douId},  ]]>
+				</if>	
+				<if test="retentionVaild != null">
+					 <![CDATA[ retentionVaild = #{retentionVaild},  ]]>
+				</if>	
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} and orderStatus != 4]]>  			  	
+			</where>  
+	  </update>
+	  
+</mapper>

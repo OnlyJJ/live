@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.jiujun.shows.dynamic.dao.DiaryUserManagerMapper">
+	<resultMap type="com.jiujun.shows.dynamic.domain.user.DiaryUserManager"  id="vo">
+		<id property="id" column="id" />
+		<result property="userId" column="userId" />
+		<result property="powerStatus" column="powerStatus" />
+		<result property="beginTime" column="beginTime" />
+		<result property="endTime" column="endTime" />
+		<result property="manmgerUserId" column="manmgerUserId" />
+	</resultMap>
+
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id
+		 ,userId
+		 ,powerStatus
+		 ,beginTime
+		 ,endTime
+		 ,manmgerUserId
+	</sql>
+	
+	<select id="getObjectById" parameterType="java.lang.Long" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_diary_user_manager
+		WHERE id= #{id}
+	</select>
+	
+	<select id="getUserManagerByUserId"  resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_diary_user_manager
+		WHERE userId= #{userId} 
+		LIMIT 1
+	</select>		
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_diary_user_manager
+				(userId
+				,powerStatus
+				,beginTime
+				,endTime
+				,manmgerUserId
+				)
+		VALUES	(#{userId}
+				,#{powerStatus}
+				,#{beginTime}
+				,#{endTime}
+				,#{manmgerUserId}
+				)
+	</insert>
+	
+	<update id="update">
+		UPDATE	t_diary_user_manager
+		<set>
+			<if test="id != null and id != ''">
+				id = #{id,jdbcType=BIGINT},
+			</if>
+			<if test="userId != null and userId != ''">
+				userId = #{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="powerStatus != null and powerStatus != ''">
+				powerStatus = #{powerStatus,jdbcType=TINYINT},
+			</if>
+			<if test="beginTime != null and beginTime != ''">
+				beginTime = #{beginTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endTime != null and endTime != ''">
+				endTime = #{endTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="manmgerUserId != null and manmgerUserId != ''">
+				manmgerUserId = #{manmgerUserId,jdbcType=VARCHAR},
+			</if>
+		</set>
+		WHERE	id = #{id,jdbcType=BIGINT}
+		  
+	</update>
+	
+	<delete id="removeById" parameterType="java.lang.Long">
+		DELETE FROM t_diary_user_manager
+		WHERE id = #{id}
+	</delete>
+	
+	
+</mapper> 

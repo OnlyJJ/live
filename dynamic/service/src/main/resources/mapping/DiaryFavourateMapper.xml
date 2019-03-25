@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.jiujun.shows.dynamic.dao.DiaryFavourateMapper">
+	<resultMap type="com.jiujun.shows.dynamic.domain.user.DiaryFavourate"  id="vo">
+		<id property="id" column="id" />
+		<result property="userId" column="userId" />
+		<result property="diaryinfoId" column="diaryinfoId" />
+		<result property="favourateType" column="favourateType" />
+		<result property="resultTime" column="resultTime" />
+	</resultMap>
+
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id
+		 ,userId
+		 ,diaryinfoId
+		 ,favourateType
+		 ,resultTime
+	</sql>
+	
+	<select id="getObjectById" parameterType="java.lang.Long" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_diary_favourate
+		WHERE id= #{id}
+	</select>	
+	
+	<select id="getPriseOrBelittleTotalByType" resultType="java.util.HashMap">
+		SELECT COUNT(*) AS total
+		FROM t_diary_favourate
+		WHERE diaryinfoId= #{diaryinfoId}
+		AND favourateType = #{favourateType}
+	</select>	
+	
+	<select id="getDiaryFavourate" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_diary_favourate
+		WHERE diaryinfoId= #{diaryinfoId}
+		AND favourateType = #{favourateType}
+		ORDER BY resultTime ASC
+	</select>	
+	
+	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_diary_favourate
+				(userId
+				,diaryinfoId
+				,favourateType
+				,resultTime
+				)
+		VALUES	(#{userId}
+				,#{diaryinfoId}
+				,#{favourateType}
+				,#{resultTime}
+				)
+	</insert>
+	
+	<update id="update">
+		UPDATE	t_diary_favourate
+		<set>
+			<if test="userId != null and userId != ''">
+				userId = #{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="diaryinfoId != null and diaryinfoId != ''">
+				diaryinfoId = #{diaryinfoId,jdbcType=VARCHAR},
+			</if>
+			<if test="favourateType != null and favourateType != ''">
+				favourateType = #{favourateType,jdbcType=TINYINT},
+			</if>
+			<if test="resultTime != null and resultTime != ''">
+				resultTime = #{resultTime,jdbcType=TIMESTAMP},
+			</if>
+		</set>
+		WHERE	id = #{id,jdbcType=BIGINT}
+		  
+	</update>
+	
+	<delete id="removeById" parameterType="java.lang.Long">
+		DELETE FROM t_diary_favourate
+		WHERE id = #{id}
+	</delete>
+	
+	
+</mapper> 

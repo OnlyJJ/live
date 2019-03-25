@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="com.lm.live.user.domain.sqlmapping.UserInfo">
+	<resultMap type="com.lm.live.user.domain.UserInfo" id="vo">
+		<result property="id" column="id" />
+		<result property="userId" column="userId" />
+		<result property="userAccount" column="userAccount" />
+		<result property="pwd" column="pwd" />
+		<result property="bindMobile" column="bindMobile" />
+		<result property="bindEmail" column="bindEmail" />
+		<result property="addTime" column="addTime" />
+		<result property="actTime" column="actTime" />
+		<result property="lastTime" column="lastTime" />
+		<result property="lastIp" column="lastIp" />
+		<result property="lastArea" column="lastArea" />
+		<result property="nickName" column="nickName" />
+		<result property="sex" column="sex" />
+		<result property="icon" column="icon" />
+		<result property="isAnchor" column="isAnchor" />
+		<result property="userStatus" column="userStatus" />
+		<result property="address" column="address" />
+		<result property="remark" column="remark" />
+		<result property="brithday" column="brithday" />
+		<result property="sf" column="sf" />
+		<result property="cs" column="cs" />
+		<result property="qy" column="qy" />
+		<result property="channelId" column="channelId" />
+		<result property="appPackage" column="appPackage" />
+		<result property="goodCodeLevel" column="goodCodeLevel" />
+		<result property="loginType" column="loginType" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer"
+		resultMap="vo">
+		select * from t_user_info where id=#{id}
+	</select>
+
+	<select id="getUserByNickName" parameterType="java.lang.String"
+		resultMap="vo">
+		select * from t_user_info where nickName=#{nickName} LIMIT 1
+	</select>
+
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from t_user_info
+		where id = #{id}
+	</delete>
+
+	<delete id="removeByIds">
+		delete from t_user_info where id in
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>
+
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_user_info where id in
+		<foreach item="item" index="index" collection="list" open="("
+			separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		<!-- <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select 
+			nextval('seq_xxx')</selectKey> -->
+	  <![CDATA[
+	  INSERT INTO t_user_info(
+			id,
+			userId,
+			userAccount,
+			pwd,
+			bindMobile,
+			bindEmail,
+			addTime,
+			actTime,
+			lastTime,
+			lastIp,
+			lastArea,
+			nickName,
+			sex,
+			icon,
+			isAnchor,
+			userStatus,
+			address,
+			remark,
+			brithday,
+			sf,
+			cs,
+			qy,
+			appPackage,
+			channelId,
+			loginType,
+			uuid
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR},
+			#{userAccount,jdbcType=VARCHAR},
+			#{pwd,jdbcType=VARCHAR},
+			#{bindMobile,jdbcType=VARCHAR},
+			#{bindEmail,jdbcType=VARCHAR},
+			#{addTime,jdbcType=VARCHAR},
+			#{actTime,jdbcType=VARCHAR},
+			#{lastTime,jdbcType=VARCHAR},
+			#{lastIp,jdbcType=VARCHAR},
+			#{lastArea,jdbcType=VARCHAR},
+			#{nickName,jdbcType=VARCHAR},
+			#{sex,jdbcType=VARCHAR},
+			#{icon,jdbcType=VARCHAR},
+			#{isAnchor,jdbcType=TINYINT},
+			#{userStatus,jdbcType=TINYINT},
+			#{address,jdbcType=VARCHAR},
+			#{remark,jdbcType=VARCHAR},
+			#{brithday,jdbcType=VARCHAR},
+			#{sf,jdbcType=VARCHAR},
+			#{cs,jdbcType=VARCHAR},
+			#{qy,jdbcType=VARCHAR},
+			#{appPackage,jdbcType=VARCHAR},
+			#{channelId,jdbcType=VARCHAR},
+			#{loginType,jdbcType=VARCHAR},
+			#{uuid,jdbcType=VARCHAR}
+		)	
+		]]>
+	</insert>
+
+
+	<update id="update">
+		UPDATE t_user_info
+		<set>
+			<!-- userDao的update不给更新userId <if test="userId != null"> <![CDATA[userId 
+				= #{userId,jdbcType=VARCHAR}, ]]> </if> -->
+			<if test="pwd != null">
+					<![CDATA[pwd = #{pwd,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="bindMobile != null">
+					<![CDATA[bindMobile = #{bindMobile,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="bindEmail != null">
+					<![CDATA[bindEmail = #{bindEmail,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="addTime != null">
+					<![CDATA[addTime = #{addTime,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="actTime != null">
+					<![CDATA[actTime = #{actTime,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="lastTime != null">
+					<![CDATA[lastTime = #{lastTime,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="lastIp != null">
+					<![CDATA[lastIp = #{lastIp,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="lastArea != null">
+					<![CDATA[lastArea = #{lastArea,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="nickName != null">
+					<![CDATA[nickName = #{nickName,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="sex != null">
+					<![CDATA[sex = #{sex,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="icon != null">
+					<![CDATA[icon = #{icon,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="isAnchor != null">
+					 <![CDATA[ isAnchor = #{isAnchor,jdbcType=TINYINT},  ]]>
+			</if>
+			<if test="userStatus != null">
+					 <![CDATA[ userStatus = #{userStatus,jdbcType=TINYINT},  ]]>
+			</if>
+			<if test="address != null">
+					 <![CDATA[ address = #{address,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="remark != null">
+					 <![CDATA[ remark = #{remark,jdbcType=VARCHAR} , ]]>
+			</if>
+			<if test="brithday != null">
+					 <![CDATA[ brithday = #{brithday,jdbcType=VARCHAR} , ]]>
+			</if>
+			<if test="sf != null">
+					 <![CDATA[ sf = #{sf,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="cs != null">
+					 <![CDATA[ cs = #{cs,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="qy != null">
+					 <![CDATA[ qy = #{qy,jdbcType=VARCHAR}  ]]>
+			</if>
+		</set>
+		<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>
+		</where>
+	</update>
+
+
+	<select id="getObjectByUserId" parameterType="java.lang.String"
+		resultMap="vo">
+		select * from t_user_info where userId = #{userId}
+	</select>
+
+	<select id="getSimpleUserByUserId" parameterType="java.util.Map"
+		resultMap="vo">
+		select userId,nickName,icon from t_user_info where userId =
+		#{userId}
+	</select>
+
+	<update id="updateIconByUserid">
+		UPDATE t_user_info set icon = #{icon} where userId = #{userId}
+	</update>
+
+	<update id="updateByUserId">
+		UPDATE t_user_info
+		<set>
+			<if test="pwd != null">
+					<![CDATA[pwd = #{pwd,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="bindMobile != null">
+					<![CDATA[bindMobile = #{bindMobile,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="bindEmail != null">
+					<![CDATA[bindEmail = #{bindEmail,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="addTime != null">
+					<![CDATA[addTime = #{addTime,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="actTime != null">
+					<![CDATA[actTime = #{actTime,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="lastTime != null">
+					<![CDATA[lastTime = #{lastTime,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="lastIp != null">
+					<![CDATA[lastIp = #{lastIp,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="lastArea != null">
+					<![CDATA[lastArea = #{lastArea,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="nickName != null">
+					<![CDATA[nickName = #{nickName,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="sex != null">
+					<![CDATA[sex = #{sex,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="icon != null">
+					<![CDATA[icon = #{icon,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="isAnchor != null">
+					 <![CDATA[ isAnchor = #{isAnchor,jdbcType=TINYINT},  ]]>
+			</if>
+			<if test="userStatus != null">
+					 <![CDATA[ userStatus = #{userStatus,jdbcType=TINYINT}  ]]>
+			</if>
+		</set>
+		<where>
+			 <![CDATA[ and userId = #{userId,jdbcType=VARCHAR} ]]>
+		</where>
+	</update>
+
+	<select id="getByWechatOpenid" parameterType="java.lang.String"
+		resultMap="vo">
+		select a.* from t_user_info a join t_wechat_userinfo b on b.userId =
+		a.userId where b.openid = #{openid}
+	</select>
+
+	<select id="getByQQConnectOpenid" parameterType="java.lang.String"
+		resultMap="vo">
+		select a.* from t_user_info a join t_qq_conect_userinfo b on b.userId =
+		a.userId where b.openid = #{openid}
+	</select>
+
+	<select id="getByWeiboUid" parameterType="java.lang.String"
+		resultMap="vo">
+		select a.* from t_user_info a join t_weibo_sina_userinfo b on b.userId =
+		a.userId where b.idstr = #{uid}
+	</select>
+
+	<select id="getUserByUserId" resultMap="vo">
+		select * from t_user_info where userId = #{userId}
+		LIMIT 1
+	</select>
+
+	<select id="getAnchorUserInfoByRoomId" resultMap="vo">
+		select u.* from
+		t_user_info u, t_user_anchor a where u.userId=a.userId AND
+		roomId=#{roomId}
+	</select>
+
+	<select id="getByWechatUnionid" parameterType="java.lang.String"
+		resultMap="vo">
+		select a.* from t_user_info a join t_wechat_userinfo b on b.userId =
+		a.userId where b.unionid = #{unionid}
+		LIMIT 1
+	</select>
+
+	<select id="getByQQConnectUnionid" parameterType="java.lang.String"
+		resultMap="vo">
+		select a.* from t_user_info a join t_qq_conect_userinfo b on b.userId =
+		a.userId where b.unionid = #{unionid}
+	</select>
+	
+	<select id="getUserDetailInfo" resultType="com.lm.live.user.vo.UserInfo">
+		SELECT   					
+			a.userId AS userId, a.nickName AS nickname, a.remark remark, a.sex sex, a.brithday brithday,
+			a.address address, a.icon icon,
+			b.gold AS gold, b.anchorLevel AS anchorLevel, b.userLevel AS userLevel,
+			b.userPoint AS userPoint, b.anchorPoint AS anchorPoint ,  
+			nextUserLevel.point AS nextLevelUserPoint, nextAnchorLevel.point AS nextLevelAnchorPoint ,
+			CASE WHEN ISNULL(d.userId) THEN 0 ELSE 1 END isAnchor ,
+			IFNULL(d.roomId, NULL) AS roomId
+		FROM t_user_info  a   
+		INNER JOIN t_user_account b ON (a.userId = b.userId)    
+		LEFT JOIN t_user_anchor d ON (a.userId=d.userId)    
+		LEFT JOIN t_level nextUserLevel ON nextUserLevel.levelType = 1 AND nextUserLevel.point > b.userPoint     
+		LEFT JOIN t_level nextAnchorLevel ON nextAnchorLevel.levelType = 2 AND nextAnchorLevel.point > b.anchorPoint       
+		WHERE a.userId = #{userId} 
+		LIMIT 1
+	</select>
+	
+</mapper>

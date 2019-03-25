@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd 
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context.xsd 
+	http://www.springframework.org/schema/mvc 
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	
+	<!-- 启用MVC注解 -->
+	<mvc:annotation-driven />
+
+	<!-- 自动扫描controller包下的所有类，使其认为spring mvc的控制器 -->
+	<context:component-scan base-package="com.lm.live.web.controller" />
+	
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"></bean>
+	
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"  
+       p:defaultEncoding="UTF-8"  
+       p:maxUploadSize="5400000"  
+    >  
+    </bean>   
+    <!-- jsp视图解析器 -->
+	<bean id="jspView" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".jsp"></property>
+	</bean>
+	<mvc:resources location="/fileUpload/" mapping="/fileUpload/**"/>
+	<mvc:resources location="/"  mapping="/**" />
+
+    <!--  拦截器解析请求参数,放到request中(必须放在所有拦截器的最前面)  -->
+    <mvc:interceptors>
+	    <mvc:interceptor>
+	    	<mvc:mapping path="/L**/**"/>
+			<mvc:mapping path="/P**/**"/>
+			<mvc:mapping path="/U**/**"/>
+			<bean class="com.lm.live.web.listeners.AnalyzeReqParameterInterceptor"></bean>
+		</mvc:interceptor>
+		<!-- 
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.jiujun.shows.common.springMVCInterceptor.LoginSessionInterceptor">
+				<property name="notfilterUrls">
+					<list>
+					</list>
+				</property>
+			</bean>
+		</mvc:interceptor>
+		-->
+		<!-- 拦截器,统一保存app端设备信息
+		<mvc:interceptor>
+			<mvc:mapping path="/U**/**"/>
+			<mvc:mapping path="/C**/**"/>
+			<mvc:mapping path="/P**/**"/>
+			<mvc:mapping path="/F**/**"/>
+			<bean class="com.jiujun.shows.common.springMVCInterceptor.SaveAppDeviceInfoInterceptor">
+				<property name="notFilterUrls">
+					<list>
+						<value>/U1/</value>
+						<value>/U2/</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:interceptor>
+		-->
+	</mvc:interceptors>
+</beans>

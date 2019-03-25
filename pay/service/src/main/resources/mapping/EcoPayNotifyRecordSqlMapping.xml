@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.pay.domain.sqlmapping.EcoPayNotifyRecord">
+	<resultMap type="com.jiujun.shows.pay.domain.EcoPayNotifyRecord" id="vo">
+	    <result property="id" column="id" />
+	    <result property="recordDateTime" column="recordDateTime" />
+	    <result property="version" column="version" />
+	    <result property="merchantId" column="merchantId" />
+	    <result property="merchOrderId" column="merchOrderId" />
+	    <result property="amount" column="amount" />
+	    <result property="extData" column="extData" />
+	    <result property="orderId" column="orderId" />
+	    <result property="status" column="status" />
+	    <result property="payTime" column="payTime" />
+	    <result property="settleDate" column="settleDate" />
+	    <result property="sign" column="sign" />
+	    <result property="notifyAllParamStr" column="notifyAllParamStr" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_eco_pay_notify where id=#{id}
+	</select>
+	
+	<select id="getObjectByOrderId" parameterType="java.lang.String" resultMap="vo">
+		select * from t_eco_pay_notify where merchOrderId=#{merchOrderId}
+	</select>
+	
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from t_eco_pay_notify where id = #{id}
+	</delete>
+	
+	<delete id="removeByIds" >
+		delete from t_eco_pay_notify where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>	
+	
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_eco_pay_notify where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>	
+
+	<select id="getListByPage"  resultMap="vo">
+		select * from t_eco_pay_notify 
+	<where>
+	 	<if test="recordDateTime != null and recordDateTime != ''">
+			AND recordDateTime like '%${recordDateTime}%'
+		</if> 	
+	 	<if test="version != null and version != ''">
+			AND version like '%${version}%'
+		</if> 	
+	 	<if test="merchantId != null and merchantId != ''">
+			AND merchantId like '%${merchantId}%'
+		</if> 	
+	 	<if test="merchOrderId != null and merchOrderId != ''">
+			AND merchOrderId like '%${merchOrderId}%'
+		</if> 	
+		<if test="amount != null">
+			AND amount = #{amount}
+		</if>	
+	 	<if test="extData != null and extData != ''">
+			AND extData like '%${extData}%'
+		</if> 	
+	 	<if test="orderId != null and orderId != ''">
+			AND orderId like '%${orderId}%'
+		</if> 	
+	 	<if test="status != null and status != ''">
+			AND status like '%${status}%'
+		</if> 	
+	 	<if test="payTime != null and payTime != ''">
+			AND payTime like '%${payTime}%'
+		</if> 	
+	 	<if test="settleDate != null and settleDate != ''">
+			AND settleDate like '%${settleDate}%'
+		</if> 	
+	 	<if test="sign != null and sign != ''">
+			AND sign like '%${sign}%'
+		</if> 	
+		<if test="appendWhere != null and appendWhere != ''">
+			${appendWhere}
+		</if>           
+      </where>
+        ORDER BY 
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}
+			</when>
+			<otherwise>
+				id
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="descOrAsc != null and descOrAsc != ''">
+				${descOrAsc}
+			</when>
+			<otherwise>
+				asc 
+			</otherwise>
+		</choose>
+	</select>
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_eco_pay_notify(
+			recordDateTime,
+			version,
+			merchantId,
+			merchOrderId,
+			amount,
+			extData,
+			orderId,
+			status,
+			payTime,
+			settleDate,
+			sign,
+			notifyAllParamStr
+			) VALUES (
+			#{recordDateTime,jdbcType=TIMESTAMP},
+			#{version,jdbcType=VARCHAR},
+			#{merchantId,jdbcType=VARCHAR},
+			#{merchOrderId,jdbcType=VARCHAR},
+			#{amount,jdbcType=TINYINT},
+			#{extData,jdbcType=VARCHAR},
+			#{orderId,jdbcType=VARCHAR},
+			#{status,jdbcType=VARCHAR},
+			#{payTime,jdbcType=VARCHAR},
+			#{settleDate,jdbcType=VARCHAR},
+			#{sign,jdbcType=LONGVARCHAR},
+			#{notifyAllParamStr,jdbcType=LONGVARCHAR}
+		)	
+		]]>
+	  </insert>
+	  
+	  <insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_eco_pay_notify(
+			recordDateTime,
+			version,
+			merchantId,
+			merchOrderId,
+			amount,
+			extData,
+			orderId,
+			status,
+			payTime,
+			settleDate,
+			sign,
+			notifyAllParamStr
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.recordDateTime,jdbcType=TIMESTAMP},#{item.version,jdbcType=VARCHAR},#{item.merchantId,jdbcType=VARCHAR},#{item.merchOrderId,jdbcType=VARCHAR},#{item.amount,jdbcType=TINYINT},#{item.extData,jdbcType=VARCHAR},#{item.orderId,jdbcType=VARCHAR},#{item.status,jdbcType=VARCHAR},#{item.payTime,jdbcType=VARCHAR},#{item.settleDate,jdbcType=VARCHAR},#{item.sign,jdbcType=LONGVARCHAR},#{item.notifyAllParamStr,jdbcType=LONGVARCHAR})
+		]]>
+		</foreach>
+	  </insert>
+	  
+	  <update id="update">
+		UPDATE t_eco_pay_notify
+			<set>
+			 	<if test="recordDateTime != null">
+					<![CDATA[recordDateTime = #{recordDateTime,jdbcType=TIMESTAMP},  ]]>
+				</if> 	
+			 	<if test="version != null">
+					<![CDATA[version = #{version,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="merchantId != null">
+					<![CDATA[merchantId = #{merchantId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="merchOrderId != null">
+					<![CDATA[merchOrderId = #{merchOrderId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="amount != null">
+					 <![CDATA[ amount = #{amount,jdbcType=TINYINT},  ]]>
+				</if>	
+			 	<if test="extData != null">
+					<![CDATA[extData = #{extData,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="orderId != null">
+					<![CDATA[orderId = #{orderId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="status != null">
+					<![CDATA[status = #{status,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="payTime != null">
+					<![CDATA[payTime = #{payTime,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="settleDate != null">
+					<![CDATA[settleDate = #{settleDate,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				
+			 	<if test="sign != null">
+					<![CDATA[sign = #{sign,jdbcType=LONGVARCHAR} , ]]>
+				</if>
+				<if test="notifyAllParamStr != null">
+					<![CDATA[notifyAllParamStr = #{notifyAllParamStr,jdbcType=LONGVARCHAR}  ]]>
+				</if> 	
+				
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>  			  	
+			</where>  
+	  </update>	
+</mapper>

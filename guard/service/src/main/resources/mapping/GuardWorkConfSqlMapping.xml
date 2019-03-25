@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.guard.domain.sqlmapping.GuardWorkConf">
+	<resultMap type="com.jiujun.shows.guard.domain.GuardWorkConf" id="vo">
+	    <result property="id" column="id" />
+	    <result property="maxSize" column="maxSize" />
+	    <result property="addTime" column="addTime" />
+	    <result property="editTime" column="editTime" />
+	    <result property="roomId" column="roomId" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="int" resultMap="vo">
+		select * from t_guard_work_conf where id=#{id}
+	</select>
+	
+	<select id="getGuardWorkConfData" resultMap="vo">
+		SELECT * FROM t_guard_work_conf where roomId=#{roomId} OR roomId='000000' ORDER BY roomId DESC LIMIT 1
+	</select>
+</mapper>

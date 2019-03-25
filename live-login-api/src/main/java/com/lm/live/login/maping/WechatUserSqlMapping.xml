@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.lm.live.login.domain.sqlmapping.WechatUserDo">
+	<resultMap type="com.lm.live.login.domain.WechatUserDo" id="vo">
+	    <result property="id" column="id" />
+	    <result property="userId" column="userId" />
+	    <result property="subscribe" column="subscribe" />
+	    <result property="nickname" column="nickname" />
+	    <result property="sex" column="sex" />
+	    <result property="city" column="city" />
+	    <result property="country" column="country" />
+	    <result property="province" column="province" />
+	    <result property="language" column="language" />
+	    <result property="headimgurl" column="headimgurl" />
+	    <result property="subscribeTime" column="subscribeTime" />
+	    <result property="unionid" column="unionid" />
+	    <result property="remark" column="remark" />
+	    <result property="groupid" column="groupid" />
+	    <result property="openid" column="openid" />
+	    <result property="privilege" column="privilege" />
+	</resultMap>
+
+	
+
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		  <![CDATA[
+		  INSERT INTO t_wechat_userinfo(
+				userId,
+				subscribe,
+				nickname,
+				sex,
+				city,
+				country,
+				province,
+				language,
+				headimgurl,
+				subscribe_time,
+				unionid,
+				remark,
+				groupid,
+				openid,
+				privilege
+				) VALUES (
+				#{userId,jdbcType=VARCHAR},
+				#{subscribe,jdbcType=VARCHAR},
+				#{nickname,jdbcType=VARCHAR},
+				#{sex,jdbcType=VARCHAR},
+				#{city,jdbcType=VARCHAR},
+				#{country,jdbcType=VARCHAR},
+				#{province,jdbcType=VARCHAR},
+				#{language,jdbcType=VARCHAR},
+				#{headimgurl,jdbcType=VARCHAR},
+				#{subscribeTime,jdbcType=VARCHAR},
+				#{unionid,jdbcType=VARCHAR},
+				#{remark,jdbcType=VARCHAR},
+				#{groupid,jdbcType=VARCHAR},
+				#{openid,jdbcType=TINYINT},
+				#{privilege,jdbcType=VARCHAR}
+			)	
+			]]>
+	  </insert>
+	  
+</mapper>

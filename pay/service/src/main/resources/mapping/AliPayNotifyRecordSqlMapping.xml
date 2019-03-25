@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.pay.domain.sqlmapping.AliPayNotifyRecord">
+	<resultMap type="com.jiujun.shows.pay.domain.AliPayNotifyRecord" id="vo">
+	    <result property="id" column="id" />
+	    <result property="recordDateTime" column="recordDateTime" />
+	    <result property="tradeNo" column="tradeNo" />
+	    <result property="totalFee" column="totalFee" />
+	    <result property="outTradeNo" column="outTradeNo" />
+	    <result property="tradeStatus" column="tradeStatus" />
+	    <result property="verifyMap" column="verifyMap" />
+	    <result property="returnCode" column="returnCode" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_ali_pay_notify where id=#{id}
+	</select>
+	
+	<select id="getObjectByOrderId" parameterType="java.lang.String" resultMap="vo">
+		select * from t_ali_pay_notify where outTradeNo = #{orderId}
+	</select> 
+	
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from t_ali_pay_notify where id = #{id}
+	</delete>
+	
+	<delete id="removeByIds" >
+		delete from t_ali_pay_notify where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>	
+	
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_ali_pay_notify where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>	
+
+	<select id="getListByPage"  resultMap="vo">
+		select * from t_ali_pay_notify 
+	<where>
+	 	<if test="recordDateTime != null and recordDateTime != ''">
+			AND recordDateTime like '%${recordDateTime}%'
+		</if> 	
+	 	<if test="tradeNo != null and tradeNo != ''">
+			AND tradeNo like '%${tradeNo}%'
+		</if> 	
+		<if test="totalFee != null">
+			AND totalFee = #{totalFee}
+		</if>	
+	 	<if test="outTradeNo != null and outTradeNo != ''">
+			AND outTradeNo like '%${outTradeNo}%'
+		</if> 	
+	 	<if test="tradeStatus != null and tradeStatus != ''">
+			AND tradeStatus like '%${tradeStatus}%'
+		</if> 	
+	 	<if test="verifyMap != null and verifyMap != ''">
+			AND verifyMap like '%${verifyMap}%'
+		</if> 	
+	 	<if test="returnCode != null and returnCode != ''">
+			AND returnCode like '%${returnCode}%'
+		</if> 	
+		<if test="appendWhere != null and appendWhere != ''">
+			${appendWhere}
+		</if>           
+      </where>
+        ORDER BY 
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}
+			</when>
+			<otherwise>
+				id
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="descOrAsc != null and descOrAsc != ''">
+				${descOrAsc}
+			</when>
+			<otherwise>
+				asc 
+			</otherwise>
+		</choose>
+	</select>
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_ali_pay_notify(
+			recordDateTime,
+			tradeNo,
+			totalFee,
+			outTradeNo,
+			tradeStatus,
+			verifyMap,
+			returnCode
+			) VALUES (
+			#{recordDateTime,jdbcType=TIMESTAMP},
+			#{tradeNo,jdbcType=VARCHAR},
+			#{totalFee,jdbcType=TINYINT},
+			#{outTradeNo,jdbcType=VARCHAR},
+			#{tradeStatus,jdbcType=VARCHAR},
+			#{verifyMap,jdbcType=LONGVARCHAR},
+			#{returnCode,jdbcType=VARCHAR}
+		)	
+		]]>
+	  </insert>
+	  
+	  <insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_ali_pay_notify(
+			
+			recordDateTime,
+			tradeNo,
+			totalFee,
+			outTradeNo,
+			tradeStatus,
+			verifyMap,
+			returnCode
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.recordDateTime,jdbcType=TIMESTAMP},#{item.tradeNo,jdbcType=VARCHAR},#{item.totalFee,jdbcType=TINYINT},#{item.outTradeNo,jdbcType=VARCHAR},#{item.tradeStatus,jdbcType=VARCHAR},#{item.verifyMap,jdbcType=LONGVARCHAR},#{item.returnCode,jdbcType=VARCHAR})
+		]]>
+		</foreach>
+	  </insert>
+	  
+	  <update id="update">
+		UPDATE t_ali_pay_notify
+			<set>
+			 	<if test="recordDateTime != null">
+					<![CDATA[recordDateTime = #{recordDateTime,jdbcType=TIMESTAMP},  ]]>
+				</if> 	
+			 	<if test="tradeNo != null">
+					<![CDATA[tradeNo = #{tradeNo,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="totalFee != null">
+					 <![CDATA[ totalFee = #{totalFee,jdbcType=TINYINT},  ]]>
+				</if>	
+			 	<if test="outTradeNo != null">
+					<![CDATA[outTradeNo = #{outTradeNo,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="tradeStatus != null">
+					<![CDATA[tradeStatus = #{tradeStatus,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="verifyMap != null">
+					<![CDATA[verifyMap = #{verifyMap,jdbcType=LONGVARCHAR},  ]]>
+				</if> 	
+			 	<if test="returnCode != null">
+					<![CDATA[returnCode = #{returnCode,jdbcType=VARCHAR}  ]]>
+				</if> 	
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>  			  	
+			</where>  
+	  </update>	
+</mapper>

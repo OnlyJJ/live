@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace必须指向Dao接口 -->
+<mapper namespace="com.jiujun.shows.dynamic.dao.DiaryInfoMapper">
+	<resultMap type="com.jiujun.shows.dynamic.domain.home.DiaryInfo"  id="vo">
+		<id property="id" column="id" />
+		<result property="userId" column="userId" />
+		<result property="publicFromType" column="publicFromType" />
+		<result property="diaryTextInfo" column="diaryTextInfo" />
+		<result property="diaryLinkUrl" column="diaryLinkUrl" />
+		<result property="publicTime" column="publicTime" />
+		<result property="publicIp" column="publicIp" />
+		<result property="publicAddress" column="publicAddress" />
+		<result property="clientType" column="clientType" />
+		<result property="remark" column="remark" />
+		<result property="sortWeight" column="sortWeight" />
+		<result property="isUserCancel" column="isUserCancel" />
+		<result property="mgrState" column="mgrState" />
+		<result property="theme" column="theme" />
+		
+	</resultMap>
+
+	<!-- 定义可重用的SQL代码段，可以包含在其他语句中 -->
+	<sql id="base_column">
+		 id
+		 ,userId
+		 ,theme
+		 ,publicFromType
+		 ,diaryTextInfo
+		 ,diaryLinkUrl
+		 ,publicTime
+		 ,publicIp
+		 ,publicAddress
+		 ,clientType
+		 ,remark
+		 ,sortWeight
+		 ,isUserCancel
+		 ,mgrState
+	</sql>
+	
+	
+	<select id="getObjectById" parameterType="java.lang.Long" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM t_diary_info
+		WHERE id=#{id}
+	</select>	
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_diary_info
+				(userId
+				,theme
+				,publicFromType
+				,diaryTextInfo
+				,diaryLinkUrl
+				,publicTime
+				,publicIp
+				,publicAddress
+				,clientType
+				,remark
+				,sortWeight
+				,isUserCancel
+				,mgrState
+				)
+		VALUES	(#{userId}
+				,#{theme}
+				,#{publicFromType}
+				,#{diaryTextInfo}
+				,#{diaryLinkUrl}
+				,#{publicTime}
+				,#{publicIp}
+				,#{publicAddress}
+				,#{clientType}
+				,#{remark}
+				,#{sortWeight}
+				,#{isUserCancel}
+				,#{mgrState}
+				)
+	</insert>
+	
+	<update id="updateUseStatus">
+		UPDATE t_diary_info SET isUserCancel = #{isUserCancel} 
+		WHERE id=#{id}
+	</update>
+	
+	<update id="update">
+		UPDATE	t_diary_info
+		<set>
+			<if test="id != null and id != ''">
+				id = #{id,jdbcType=BIGINT},
+			</if>
+			<if test="userId != null and userId != ''">
+				userId = #{userId,jdbcType=VARCHAR},
+			</if>
+			<if test="publicFromType != null and publicFromType != ''">
+				publicFromType = #{publicFromType,jdbcType=TINYINT},
+			</if>
+			<if test="theme != null and theme != ''">
+				theme = #{theme,jdbcType=VARCHAR},
+			</if>
+			<if test="diaryTextInfo != null and diaryTextInfo != ''">
+				diaryTextInfo = #{diaryTextInfo,jdbcType=LONGTEXT},
+			</if>
+			<if test="diaryLinkUrl != null and diaryLinkUrl != ''">
+				diaryLinkUrl = #{diaryLinkUrl,jdbcType=VARCHAR},
+			</if>
+			<if test="publicTime != null and publicTime != ''">
+				publicTime = #{publicTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="publicIp != null and publicIp != ''">
+				publicIp = #{publicIp,jdbcType=VARCHAR},
+			</if>
+			<if test="publicAddress != null and publicAddress != ''">
+				publicAddress = #{publicAddress,jdbcType=VARCHAR},
+			</if>
+			<if test="clientType != null and clientType != ''">
+				clientType = #{clientType,jdbcType=TINYINT},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark = #{remark,jdbcType=VARCHAR},
+			</if>
+			<if test="sortWeight != null and sortWeight != ''">
+				sortWeight = #{sortWeight,jdbcType=INTEGER},
+			</if>
+			<if test="isUserCancel != null and isUserCancel != ''">
+				isUserCancel = #{isUserCancel,jdbcType=TINYINT},
+			</if>
+			<if test="mgrState != null and mgrState != ''">
+				mgrState = #{mgrState,jdbcType=TINYINT},
+			</if>
+		</set>
+		WHERE	id = #{id,jdbcType=BIGINT}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM t_diary_info
+		WHERE id
+		   IN
+    	<foreach item="diaryInfoId" index="index" collection="array" open="(" separator="," close=")">
+	  		#{diaryInfoId} 
+		</foreach>
+	</delete>
+	
+	<delete id="removeById" parameterType="java.lang.Long">
+		DELETE FROM t_diary_info
+		WHERE id = #{id}
+	</delete>
+	
+	<!-- 必须是时间正序排列 -->
+	<select id="getAllDiaryInfos" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM	t_diary_info
+		<!-- 动态没有被撤回 -->
+		WHERE isUserCancel=0
+		<!-- 没有被管理员删除的 -->
+		AND mgrState != 1
+		ORDER BY publicTime ASC
+	</select>
+	
+	<!-- 必须是时间正序排列 -->
+	<select id="getUserAllDiaryInfos" resultMap="vo">
+		SELECT	<include refid="base_column" />
+		FROM	t_diary_info
+		<!-- 动态没有被撤回 -->
+		WHERE userId=#{userId}
+		AND isUserCancel=0
+		<!-- 没有被管理员删除的 -->
+		AND mgrState != 1
+		ORDER BY publicTime ASC
+	</select>
+	
+</mapper> 

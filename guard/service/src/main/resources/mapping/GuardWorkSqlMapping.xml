@@ -1,0 +1,359 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.guard.domain.sqlmapping.GuardWork">
+	<resultMap type="com.jiujun.shows.guard.domain.GuardWork" id="guardWorkVo">
+	    <result property="id" column="id" />
+	    <result property="guardId" column="guardId" />
+	    <result property="userId" column="userId" />
+	    <result property="roomId" column="roomId" />
+	    <result property="isPeriod" column="isPeriod" />
+	    <result property="endTime" column="endTime" />
+	    <result property="sortIndex" column="sortIndex" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="int" resultMap="guardWorkVo">
+		select * from t_guard_work where id=#{id}
+	</select>
+	
+	<select id="getGuardEndTimeByUser" parameterType="int" resultMap="guardWorkVo">
+		select w.* from t_guard_work w, t_guard_conf c 
+		where w.guardId=c.id 
+		AND userId=#{userId} 
+		<if test="roomId != null and roomId != ''">
+			AND roomId=#{roomId}
+		</if>
+		AND c.guardType= #{guardType} 
+		ORDER BY endTime DESC 
+		LIMIT 1
+	</select>
+	
+	<select id="getGuardInfoAllData"  resultMap="guardWorkVo">
+	<![CDATA[
+		select * from t_guard_work where userId=#{userId} AND (isPeriod = 0 OR (isPeriod = 1 AND endTime >= NOW())) 
+	]]>
+ 	</select>
+	
+	<select id="getUserGuardRoomData"  resultType="java.util.HashMap">
+	<![CDATA[
+		SELECT 
+		c.id AS guardId,
+		c.level AS level,
+		c.guardType AS guardType,
+		c.priceType AS priceType,
+		c.image AS image,
+		w.id AS workId,
+		w.guardId AS guardId,
+		w.userId AS userId,
+		w.roomId AS roomId,
+		w.isPeriod AS isPeriod,
+		w.endTime AS endTime
+		FROM t_guard_work w, t_guard_conf c 
+		WHERE w.guardId = c.id 
+		AND w.userId=#{userId} 
+		AND w.roomId=#{roomId} 
+		AND (w.isPeriod = 0 OR (w.isPeriod = 1 AND w.endTime >= NOW())) 
+		ORDER BY level DESC, endTime DESC   
+	]]>
+ 	</select>
+ 	
+ 	<select id="getGuardWorkListByRoom"  resultMap="guardWorkVo">
+	<![CDATA[
+		select * from t_guard_work where roomId=#{roomId} AND (isPeriod = 0 OR (isPeriod = 1 AND endTime >= NOW())) 
+	]]>
+ 	</select>
+ 	
+ 	<select id="getUserGuardInfoAllRoom" resultType="java.util.HashMap">
+ 	<![CDATA[
+	SELECT r.guardId AS guardId,r.level AS level,r.image AS image,r.guardType AS guardType,r.priceType AS priceType,r.roomId AS roomId,r.endTime AS endTime FROM 
+	(		
+		SELECT w.guardId,c.level,c.image,c.guardType,c.priceType,w.roomId,w.endTime FROM t_guard_work w, t_guard_conf c 
+		WHERE w.guardId=c.id 
+		AND w.userId= #{userId}
+		AND (w.isPeriod = 0 OR (w.isPeriod = 1 AND w.endTime >= NOW())) 
+		ORDER BY c.level DESC, w.endTime DESC 
+	) AS r 
+	GROUP BY roomId 
+	]]>
+ 	</select>
+	<!-- 2016-11-30 优化查询，去掉关联富豪表
+	<select id="getGuardWorkDataByRoom"  resultType="java.util.HashMap">
+	<![CDATA[
+		SELECT 
+		  r.id AS guardId,
+		  r.workId AS workId,
+		  r.userId AS gdUserId,
+		  r.name AS name,
+		  r.image AS image,
+		  r.level AS level,
+		  r.guardType AS guardType,
+		  r.priceType AS priceType,
+		  r.endTime AS endTime
+		FROM
+		  (SELECT 
+		  	c.id,
+		  	w.id AS workId,
+		  	w.userId,
+		    c.name,
+		    c.image,
+		    c.level,
+		    c.guardType,
+		    c.priceType,
+		    w.endTime,
+		    a.num 
+		  FROM
+		    t_guard_work w 
+		    LEFT JOIN t_guard_conf c 
+		      ON w.guardId = c.id
+		    LEFT JOIN 
+		      (SELECT 
+		        userId,
+		        SUM(gold) AS num 
+		      FROM
+		        t_stat_fuhao 
+		      GROUP BY userId) a 
+		      ON w.userId = a.userId 
+		  WHERE w.roomId = #{roomId}
+		     AND  (w.isPeriod = 0 OR ( w.isPeriod = 1 AND w.endTime >= NOW()))
+		  ORDER BY c.level DESC,a.num DESC
+		 ) r 
+	]]>
+	</select> 
+	 -->
+	 <select id="getGuardWorkDataByRoom"  resultType="java.util.HashMap">
+	<![CDATA[
+		SELECT 
+		  r.id AS guardId,
+		  r.workId AS workId,
+		  r.userId AS gdUserId,
+		  r.name AS name,
+		  r.image AS image,
+		  r.level AS level,
+		  r.guardType AS guardType,
+		  r.priceType AS priceType,
+		  r.sortIndex as sortIndex,
+		  r.endTime AS endTime,
+		  CASE WHEN  ISNULL(r.sortIndex)  THEN 999999 ELSE r.sortIndex END useAsSortIndex,
+		  userAcc.userLevel
+		FROM
+		  (SELECT 
+		  	c.id,
+		  	w.id AS workId,
+		  	w.userId,
+		    c.name,
+		    c.image,
+		    c.level,
+		    c.guardType,
+		    c.priceType,
+		    w.sortIndex,
+		    w.endTime
+		  FROM
+		    t_guard_work w
+		    LEFT JOIN t_guard_conf c 
+		      ON w.guardId = c.id
+		  WHERE w.roomId = #{roomId}
+		     AND  (w.isPeriod = 0 OR ( w.isPeriod = 1 AND w.endTime >= NOW()))
+		  ORDER BY c.level DESC
+		 ) r 
+		  JOIN t_user_account userAcc ON userAcc.userId=r.userId
+ 		  ORDER BY useAsSortIndex asc,r.level DESC ,userAcc.userPoint DESC
+	]]>
+		<!-- 
+		 排序:金/银、用户等级
+		  -->
+	</select>
+	
+	<select id="getGuardWorkByCondition" resultMap="guardWorkVo">
+		SELECT * FROM t_guard_work WHERE userId=#{userId} AND roomId=#{roomId} AND guardId=#{guardId}
+	</select>
+	
+	<select id="qryRoomGuradList" resultType="java.util.Map">
+			SELECT e.nickName as nickname,e.icon as avatar,b.guardType,b.priceType ,b.diamond,b.validate,DATE_FORMAT(a.beginTime,'%Y-%m-%d %T') as beginTime
+			FROM t_guard_pay_his   a 
+			JOIN t_guard_conf b ON a.guardId=b.id
+			JOIN t_user_anchor c ON c.roomId = a.roomId
+			JOIN t_user_info d ON d.userId = c.userId 
+			JOIN t_user_info e ON e.userId = a.userId
+			WHERE c.userId=#{anchorUserId}
+	</select>
+	
+
+	
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO t_guard_work(
+			guardId,
+			userId,
+			roomId,
+			isPeriod,
+			endTime
+		) VALUES (
+			#{guardId,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR},
+			#{roomId,jdbcType=VARCHAR},
+			#{isPeriod,jdbcType=VARCHAR},
+			#{endTime,jdbcType=VARCHAR}
+		)
+	</insert>
+	
+	<update id="update">
+		UPDATE t_guard_work 
+		<set>
+			<if test="guardId != null">
+				<![CDATA[guardId = #{guardId,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="userId != null and userId != ''">
+				<![CDATA[userId = #{userId,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="roomId != null and roomId != ''">
+				<![CDATA[roomId = #{roomId,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="sortIndex != null and sortIndex != ''">
+				<![CDATA[sortIndex = #{sortIndex,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="isPeriod != null">
+				<![CDATA[isPeriod = #{isPeriod,jdbcType=VARCHAR},  ]]>
+			</if>
+			<if test="endTime != null">
+				<![CDATA[endTime = #{endTime,jdbcType=VARCHAR}  ]]>
+			</if>
+		</set>
+		<where>
+			<![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>  		
+		</where>
+	</update>
+	
+	<select id="getUserGuardAllData" resultType="java.util.HashMap">
+ 	<![CDATA[
+	SELECT r.id AS workId,r.guardId AS guardId,r.level AS level,r.image AS image,r.guardType AS guardType,
+	r.priceType AS priceType,r.roomId AS roomId,r.toUserId AS anchorId,r.beginTime AS beginTime,r.endTime AS endTime,
+	r.validate AS validate,r.remark AS remark
+	FROM 
+	(		
+		SELECT w.id,w.guardId,c.level,c.image,c.guardType,c.priceType,w.roomId,d.beginTime,w.endTime,d.remark,d.toUserId,d.validate 
+		FROM t_guard_work w 
+		INNER JOIN t_guard_conf c ON w.guardId=c.id 
+		INNER JOIN (SELECT * FROM t_guard_pay_his p GROUP BY p.workId) d ON w.id=d.workId
+		WHERE w.userId=#{userId}
+		AND (w.isPeriod = 0 OR (w.isPeriod = 1 AND w.endTime >= NOW())) 
+		ORDER BY c.level DESC, w.endTime DESC 
+	) AS r
+	]]>
+ 	</select>
+ 	
+ 	 <update id="setGuardWorkSortIndex2Null">
+		UPDATE t_guard_work set sortIndex=null where roomId=#{roomId}
+	 </update>	
+	 
+	 <select id="findRoomGuardWorkList" resultMap="guardWorkVo">
+		  SELECT a.* FROM t_guard_work a
+			JOIN t_guard_conf b ON a.guardId=b.id
+			WHERE a.roomId=#{roomId}
+			AND b.guardType=#{guardType}
+			AND  (a.isPeriod = 0 OR (a.isPeriod = 1 AND a.endTime >= NOW())) 
+	</select>
+	
+	 <select id="findRoomIdThatHasGuardWork" resultType="java.lang.String" >
+		 SELECT DISTINCT a.roomId
+		  FROM t_guard_work a
+			WHERE (a.isPeriod = 0 OR (a.isPeriod = 1 AND a.endTime >= NOW())) 
+	</select>
+	
+	<select id="findRoomGuardLastWeekGiveTop" resultType="java.lang.String">
+	
+	<![CDATA[
+			SELECT a.userId  FROM t_pay_gift_out a 
+			JOIN t_user_anchor b ON b.userId=a.toUserId
+			JOIN t_guard_work c ON c.roomId=b.roomId and c.userId = a.userId
+			WHERE b.roomId=#{roomId}
+			 AND a.resultTime >= #{beginTime} AND a.resultTime <=#{endTime}
+			 AND (c.isPeriod = 0 OR (c.isPeriod = 1 AND c.endTime >= NOW())) 
+			GROUP BY b.roomId,a.userId
+			ORDER BY sum(a.price) DESC 
+			limit #{qrySize}
+			
+			]]>
+	</select>
+	
+	<select id="listAllstationGoldGuard" resultType="java.util.HashMap">
+	<![CDATA[
+		SELECT a.userId AS anchorId,COUNT(*) AS total FROM t_guard_work w
+		INNER JOIN t_guard_conf f ON f.id = w.guardId
+		INNER JOIN t_user_anchor a ON a.roomId = w.roomId
+		WHERE 
+		w.guardId = f.id AND f.guardType =2 
+		AND (w.isPeriod = 0 OR (w.isPeriod =1 AND NOW() < w.endTime) ) 
+		GROUP BY w.roomId
+		ORDER BY total DESC
+		LIMIT #{size}
+	]]>
+	</select>
+	
+	<select id="listAllStationGuard" resultType="java.util.HashMap">
+	<![CDATA[
+		SELECT a.userId AS anchorId,COUNT(*) AS total FROM t_guard_work w,t_user_anchor a
+		WHERE w.roomId = a.roomId
+		AND (w.isPeriod = 0 OR (w.isPeriod =1 AND NOW() < w.endTime) ) 
+		GROUP BY w.roomId
+		ORDER BY total DESC
+		LIMIT #{size}
+	]]>
+	</select>
+	
+	
+	<select id="getUserGuardCount" resultType="java.lang.Integer">
+		select count(*) as total from t_guard_work  
+		where 1=1
+			and userId = #{userId}
+			and roomId = #{roomId}
+			<![CDATA[
+				AND endTime >= #{beginTime} 
+			]]>
+	</select>
+	
+	
+	<select id="listAllGuardByHaving" resultType="java.util.HashMap">
+	<![CDATA[
+		SELECT w.roomId AS roomId,COUNT(*) AS total FROM t_guard_work w
+		WHERE 1=1
+		AND (w.isPeriod = 0 OR (w.isPeriod =1 AND NOW() < w.endTime) )
+		GROUP BY w.roomId
+		having total >=10
+		ORDER BY total ASC
+	]]>
+	</select>
+	
+	<select id="listGoldGuardByHaving" resultType="java.util.HashMap">
+	<![CDATA[
+		SELECT w.roomId AS roomId,COUNT(*) AS total FROM t_guard_work w
+		INNER JOIN t_guard_conf f ON f.id = w.guardId
+		WHERE 1=1
+		and w.guardId = f.id AND f.guardType =2 
+		AND (w.isPeriod = 0 OR (w.isPeriod =1 AND NOW() < w.endTime) ) 
+		GROUP BY w.roomId
+		ORDER BY total ASC
+	]]>
+	</select>
+	
+	<select id="getRoomGuardUser" resultType="java.lang.String">
+		<![CDATA[
+		SELECT userId FROM t_guard_work w
+		WHERE 1=1
+		AND (w.isPeriod = 0 OR (w.isPeriod =1 AND NOW() < w.endTime))
+		AND roomId = #{roomId}
+		GROUP BY w.userId
+		]]>
+	</select>
+	
+	 	
+ 	<select id="listGuardWorkGroupByUser"  resultMap="guardWorkVo">
+	<![CDATA[
+		select * from t_guard_work 
+		where roomId=#{roomId} 
+		AND (isPeriod = 0 OR (isPeriod = 1 AND endTime >= NOW())) 
+		group by userId
+	]]>
+ 	</select>
+	
+</mapper>

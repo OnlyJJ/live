@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans  
+            http://www.springframework.org/schema/beans/spring-beans.xsd  
+            http://code.alibabatech.com/schema/dubbo  
+            http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+	<!-- 消费方应用名，用于计算依赖关系，不是匹配条件，不要与提供方一样 -->
+    <dubbo:application name="shows-car-consumer" /> 
+    
+    <!-- 使用zookeeper注册中心暴露发现服务地址 -->
+    <dubbo:registry protocol="zookeeper" address="${dubbo.registry.address}" />
+    
+    <!-- 监控中心配置，protocol="registry"，表示从注册中心发现监控中心地址 -->
+	<dubbo:monitor protocol="registry"/>
+    
+    <!-- car消费者 -->
+	<dubbo:reference id="userCarPortService" interface="com.jiujun.shows.car.service.IUserCarPortService" check="false" url="dubbo://localhost:20881" />
+	<dubbo:reference id="sysCarService" interface="com.jiujun.shows.car.service.ISysCarService" check="false" url="dubbo://localhost:20881" />
+	<dubbo:reference id="carParkRecordService" interface="com.jiujun.shows.car.service.ICarParkRecordService" check="false" />
+	
+	<!-- dynamic消费者 -->
+	<dubbo:reference id="diaryCommentService" interface="com.jiujun.shows.dynamic.service.user.IDiaryCommentService" check="false"/>
+	<dubbo:reference id="diaryFavourateService" interface="com.jiujun.shows.dynamic.service.user.IDiaryFavourateService"  check="false"/>
+	<dubbo:reference id="diaryUserManagerService" interface="com.jiujun.shows.dynamic.service.user.IDiaryUserManagerService" check="false" />
+	<dubbo:reference id="diaryInfoImgService" interface="com.jiujun.shows.dynamic.service.home.IDiaryInfoImgService" check="false" />
+	<dubbo:reference id="diaryInfoImgSubService" interface="com.jiujun.shows.dynamic.service.home.IDiaryInfoImgSubService" check="false" />
+	<dubbo:reference id="diaryInfoService" interface="com.jiujun.shows.dynamic.service.home.IDiaryInfoService" check="false" />
+	<dubbo:reference id="diaryBannerService" interface="com.jiujun.shows.dynamic.service.banner.IDiaryBannerService" check="false" />
+	<dubbo:reference id="fileUploadService" interface="com.jiujun.shows.base.service.IFileUploadService" check="false" />
+	
+	<dubbo:reference id="payChargeOrderService" interface="com.jiujun.shows.pay.service.IPayChargeOrderService" check="false" />
+</beans>  

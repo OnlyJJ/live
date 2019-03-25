@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.car.dao.SysCarMapper">
+	<resultMap type="com.jiujun.shows.car.domain.SysCarDo" id="vo">
+	    <result property="id" column="id" />
+	    <result property="carName" column="carName" />
+	    <result property="type" column="type" />
+	    <result property="gold" column="gold" />
+	    <result property="price" column="price" />
+	    <result property="effectiveDays" column="effectiveDays" />
+	    <result property="comment" column="comment" />
+	    <result property="inUse" column="inUse" />
+	    <result property="status" column="status" />
+	    <result property="userId" column="userId" />
+	    <result property="image" column="image" />
+	    <result property="beginTime" column="beginTime" />
+	    <result property="endTime" column="endTime" />
+	    <result property="num" column="num" />
+	    <result property="showStatus" column="showStatus" />
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_sys_car where id=#{id}
+	</select>
+	
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from t_sys_car where id = #{id}
+	</delete>
+	
+	<delete id="removeByIds" >
+		delete from t_sys_car where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>	
+	
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_sys_car where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>	
+	
+	 <select id="countForGetListByPage"  resultType="java.lang.Integer"> 
+                <include refid="sql_count"/> 
+                <include refid="sql_getListByPage"/> 
+     </select> 
+
+	<select id="getListByPage"  resultMap="vo">
+		<![CDATA[
+			SELECT a.*, CASE WHEN  ISNULL(b.id) THEN 3 WHEN (b.endTime<NOW())=1 THEN 2  WHEN  ISNULL(b.beginTime) THEN 0 ELSE 1 END status, b.inUse,b.beginTime,b.endTime,b.num
+		]]>
+		<include refid="sql_getListByPage"/>
+        ORDER BY a.type asc,a.price desc   
+		<choose>
+			<when test="offset != null and offset != '' and pageSize != null and pageSize != ''">
+				 limit #offset#, #pageSize# 
+			</when>
+		</choose>
+	</select>
+	
+	
+	 <sql id="sql_count"> 
+                select count(*) 
+     </sql> 
+     <sql id="sql_allColumns"> 
+             select * 
+     </sql> 
+	
+	<sql id="sql_getListByPage">
+		FROM t_sys_car a
+		LEFT JOIN t_user_carport b ON b.carId = a.id AND b.userId=#{userId}
+		<where>
+		 	<if test="carName != null and carName != ''">
+				AND a.carName like '%${carName}%'
+			</if>
+			<if test="type != null and type != ''">
+				AND a.type =  #{type}
+			</if>  	
+	      </where>
+	</sql>
+	
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_sys_car(
+			id,
+			carName,
+			type,
+			gold,
+			price,
+			effectiveDays,
+			image,
+			comment
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{carName,jdbcType=VARCHAR},
+			#{type,jdbcType=VARCHAR},
+			#{gold,jdbcType=VARCHAR},
+			#{price,jdbcType=VARCHAR},
+			#{effectiveDays,jdbcType=VARCHAR},
+			#{image,jdbcType=VARCHAR},
+			#{comment,jdbcType=VARCHAR}
+		)	
+		]]>
+	  </insert>
+	  
+	  <insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_sys_car(
+			id,
+			carName,
+			type,
+			gold,
+			price,
+			effectiveDays,
+			comment
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.id,jdbcType=VARCHAR},#{item.carName,jdbcType=VARCHAR},#{item.type,jdbcType=VARCHAR},#{item.gold,jdbcType=VARCHAR},#{item.price,jdbcType=VARCHAR},#{item.effectiveDays,jdbcType=VARCHAR},#{item.comment,jdbcType=VARCHAR})
+		]]>
+		</foreach>
+	  </insert>
+	  
+	  <update id="update">
+		UPDATE t_sys_car
+			<set>
+			 	<if test="carName != null">
+					<![CDATA[carName = #{carName,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="type != null">
+					 <![CDATA[ type = #{type,jdbcType=VARCHAR},  ]]>
+				</if>	
+				<if test="gold != null">
+					 <![CDATA[ gold = #{gold,jdbcType=VARCHAR},  ]]>
+				</if>	
+				<if test="price != null">
+					 <![CDATA[ price = #{price,jdbcType=VARCHAR},  ]]>
+				</if>	
+				<if test="effectiveDays != null">
+					 <![CDATA[ effectiveDays = #{effectiveDays,jdbcType=VARCHAR},  ]]>
+				</if>
+				<if test="image != null">
+					 <![CDATA[ image = #{image,jdbcType=VARCHAR},  ]]>
+				</if>	
+				
+			 	<if test="comment != null">
+					<![CDATA[comment = #{comment,jdbcType=VARCHAR}  ]]>
+				</if> 	
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>  			  	
+			</where>  
+	  </update>	
+	  
+	  <select id="findUserCars"  resultMap="vo">
+		SELECT a.* 
+		FROM t_sys_car a
+		JOIN t_user_carport b ON b.carId = a.id
+		WHERE b.userId = #{userId}
+		AND (b.beginTime IS NULL OR b.endTime >= NOW())
+		GROUP BY a.id 
+	</select>
+	
+	  
+	  
+</mapper>

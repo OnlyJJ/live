@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.jiujun.shows.app.apple.domain.sqlmapping.AppleProduct">
+	<resultMap type="com.jiujun.shows.app.apple.domain.AppleProductDo" id="vo">
+	    <result property="id" column="id" />
+	    <result property="productId" column="productId" />
+	    <result property="money" column="money" />
+	    <result property="golds" column="golds" />
+	    <result property="remark" column="remark" />
+	    <result property="addTime" column="addTime" />
+	    <result property="editTime" column="editTime" />
+	    <result property="rateMoney" column="rateMoney" />
+	    
+	</resultMap>
+
+	<select id="getObjectById" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_apple_product where id=#{id}
+	</select>
+	
+	<select id="getObjectByProductId" parameterType="java.lang.Integer" resultMap="vo">
+		select * from t_apple_product where productId=#{productId}
+	</select>
+	
+	<delete id="removeById" parameterType="java.lang.Integer">
+		delete from t_apple_product where id = #{id}
+	</delete>
+	
+	<delete id="removeByIds" >
+		delete from t_apple_product where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item}
+		</foreach>
+	</delete>	
+	
+	<delete id="removeEntityBatch" parameterType="java.util.List">
+		delete from t_apple_product where id in 
+		<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+			#{item.id}
+		</foreach>
+	</delete>	
+
+	<select id="getListByPage"  resultMap="vo">
+		select * from t_apple_product 
+	<where>
+	 	<if test="productId != null and productId != ''">
+			AND productId like '%${productId}%'
+		</if> 	
+		<if test="money != null">
+			AND money = #{money}
+		</if>	
+		<if test="golds != null">
+			AND golds = #{golds}
+		</if>	
+	 	<if test="remark != null and remark != ''">
+			AND remark like '%${remark}%'
+		</if> 	
+	 	<if test="addTime != null and addTime != ''">
+			AND addTime like '%${addTime}%'
+		</if> 	
+	 	<if test="editTime != null and editTime != ''">
+			AND editTime like '%${editTime}%'
+		</if> 	
+		<if test="appendWhere != null and appendWhere != ''">
+			${appendWhere}
+		</if>           
+      </where>
+        ORDER BY 
+		<choose>
+			<when test="orderBy != null and orderBy != ''">
+				${orderBy}
+			</when>
+			<otherwise>
+				id
+			</otherwise>
+		</choose>
+		<choose>
+			<when test="descOrAsc != null and descOrAsc != ''">
+				${descOrAsc}
+			</when>
+			<otherwise>
+				asc 
+			</otherwise>
+		</choose>
+	</select>
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+	  <!--
+	  <selectKey resultType="int" keyProperty="baseId" order="BEFORE">select nextval('seq_xxx')</selectKey>
+	  -->
+	  <![CDATA[
+	  INSERT INTO t_apple_product(
+			id,
+			productId,
+			money,
+			golds,
+			remark,
+			addTime,
+			editTime,
+			rateMoney
+			) VALUES (
+			#{id,jdbcType=VARCHAR},
+			#{productId,jdbcType=VARCHAR},
+			#{money,jdbcType=TINYINT},
+			#{golds,jdbcType=TINYINT},
+			#{remark,jdbcType=VARCHAR},
+			#{addTime,jdbcType=TIMESTAMP},
+			#{editTime,jdbcType=TIMESTAMP},
+			#{rateMoney}
+		)	
+		]]>
+	  </insert>
+	  
+	  <insert id="insertBatch" parameterType="java.util.List">
+	  <![CDATA[
+	  		INSERT INTO t_apple_product(
+			id,
+			productId,
+			money,
+			golds,
+			remark,
+			addTime,
+			editTime
+			) VALUES 
+		]]>
+		<foreach collection="list" item="item" separator=",">
+		<![CDATA[
+			 (#{item.id,jdbcType=VARCHAR},#{item.productId,jdbcType=VARCHAR},#{item.money,jdbcType=TINYINT},#{item.golds,jdbcType=TINYINT},#{item.remark,jdbcType=VARCHAR},#{item.addTime,jdbcType=TIMESTAMP},#{item.editTime,jdbcType=TIMESTAMP})
+		]]>
+		</foreach>
+	  </insert>
+	  
+	  <update id="update">
+		UPDATE t_apple_product
+			<set>
+			 	<if test="productId != null">
+					<![CDATA[productId = #{productId,jdbcType=VARCHAR},  ]]>
+				</if> 	
+				<if test="money != null">
+					 <![CDATA[ money = #{money,jdbcType=TINYINT},  ]]>
+				</if>	
+				<if test="golds != null">
+					 <![CDATA[ golds = #{golds,jdbcType=TINYINT},  ]]>
+				</if>	
+			 	<if test="remark != null">
+					<![CDATA[remark = #{remark,jdbcType=VARCHAR},  ]]>
+				</if> 	
+			 	<if test="addTime != null">
+					<![CDATA[addTime = #{addTime,jdbcType=TIMESTAMP},  ]]>
+				</if> 	
+			 	<if test="editTime != null">
+					<![CDATA[editTime = #{editTime,jdbcType=TIMESTAMP}  ]]>
+				</if> 	
+			</set>
+			<where>
+			 <![CDATA[ and id = #{id,jdbcType=VARCHAR} ]]>  			  	
+			</where>  
+	  </update>	
+</mapper>

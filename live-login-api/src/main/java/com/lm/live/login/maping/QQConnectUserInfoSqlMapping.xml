@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.lm.live.login.domain.sqlmapping.QQConnectUserInfoDo">
+	<resultMap type="com.lm.live.login.domain.QQConnectUserInfoDo" id="vo">
+	    <result property="id" column="id" />
+	    <result property="userId" column="userId" />
+	    <result property="openid" column="openid" />
+	    <result property="nickname" column="nickname" />
+	     <result property="figureurl" column="figureurl" />
+	    <result property="figureurl_1" column="figureurl_1" />
+	    <result property="figureurl_2" column="figureurl_2" />
+	    <result property="figureurl_qq_1" column="figureurl_qq_1" />
+	    <result property="figureurl_qq_2" column="figureurl_qq_2" />
+	    <result property="gender" column="gender" />
+	    <result property="is_yellow_vip" column="is_yellow_vip" />
+	    <result property="vip" column="vip" />
+	    <result property="yellow_vip_level" column="yellow_vip_level" />
+	    <result property="level" column="level" />
+	    <result property="is_yellow_year_vip" column="is_yellow_year_vip" />
+	    <result property="province" column="province" />
+	    <result property="city" column="city" />
+	    <result property="clientid" column="client_id" />
+	    <result property="unionid" column="unionid" />
+	</resultMap>
+
+	
+
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		  <![CDATA[
+		  INSERT INTO t_qq_conect_userinfo(
+				userId,
+				openid,
+				nickname,
+				figureurl,
+				figureurl_1,
+				figureurl_2,
+				figureurl_qq_1,
+				figureurl_qq_2,
+				gender,
+				is_yellow_vip,
+				vip,
+				yellow_vip_level,
+				level,
+				is_yellow_year_vip,
+				province,
+				city,
+				client_id,
+				unionid
+				) 
+			VALUES (
+				#{userId,jdbcType=VARCHAR},
+				#{openid,jdbcType=VARCHAR},
+				#{nickname,jdbcType=VARCHAR},
+				#{figureurl,jdbcType=VARCHAR},
+				#{figureurl_1,jdbcType=VARCHAR},
+				#{figureurl_2,jdbcType=VARCHAR},
+				#{figureurl_qq_1,jdbcType=VARCHAR},
+				#{figureurl_qq_2,jdbcType=VARCHAR},
+				#{gender,jdbcType=VARCHAR},
+				#{is_yellow_vip,jdbcType=TINYINT},
+				#{vip,jdbcType=TINYINT},
+				#{yellow_vip_level,jdbcType=VARCHAR},
+				#{level,jdbcType=VARCHAR},
+				#{is_yellow_year_vip,jdbcType=TINYINT},
+				#{province,jdbcType=VARCHAR},
+				#{city,jdbcType=VARCHAR},
+				#{clientid,jdbcType=VARCHAR},
+				#{unionid,jdbcType=VARCHAR}
+				
+			)	
+			]]>
+	  </insert>
+	  
+</mapper>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.lm.live.login.domain.sqlmapping.WeiboUserInfoDo">
+	<resultMap type="com.lm.live.login.domain.WeiboUserInfoDo" id="vo">
+	    <result property="id" column="id" />
+	    <result property="userId" column="userId" />
+	    <result property="idstr" column="idstr" />
+	    <result property="screen_name" column="screen_name" />
+	     <result property="name" column="name" />
+	    <result property="province" column="province" />
+	    <result property="city" column="city" />
+	    <result property="location" column="location" />
+	    <result property="description" column="description" />
+	    <result property="url" column="url" />
+	    <result property="profile_image_url" column="profile_image_url" />
+	    <result property="profile_url" column="profile_url" />
+	    <result property="domain" column="domain" />
+	    <result property="weihao" column="weihao" />
+	    <result property="gender" column="gender" />
+	    <result property="followers_count" column="followers_count" />
+	    <result property="friends_count" column="friends_count" />
+	     <result property="statuses_count" column="statuses_count" />
+	    <result property="favourites_count" column="favourites_count" />
+	    <result property="created_at" column="created_at" />
+	    <result property="following" column="following" />
+	    <result property="allow_all_act_msg" column="allow_all_act_msg" />
+	    <result property="geo_enabled" column="geo_enabled" />
+	    <result property="verified" column="verified" />
+	    <result property="verified_type" column="verified_type" />
+	    <result property="remark" column="remark" />
+	    <result property="status" column="status" />
+	    <result property="allow_all_comment" column="allow_all_comment" />
+	    <result property="avatar_large" column="avatar_large" />
+	    <result property="avatar_hd" column="avatar_hd" />
+	    <result property="verified_reason" column="verified_reason" />
+	    <result property="follow_me" column="follow_me" />
+	    <result property="online_status" column="online_status" />
+	    <result property="bi_followers_count" column="bi_followers_count" />
+	    <result property="lang" column="lang" />
+	</resultMap>
+
+	
+
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		  <![CDATA[
+		  INSERT INTO t_weibo_sina_userinfo(
+				userId,
+				idstr,
+				screen_name,
+				name,
+				province,
+				city,
+				location,
+				description,
+				url,
+				profile_image_url,
+				profile_url,
+				domain,
+				weihao,
+				gender,
+				followers_count,
+				friends_count,
+				statuses_count,
+				favourites_count,
+				created_at,
+				following,
+				allow_all_act_msg,
+				geo_enabled,
+				verified,
+				verified_type,
+				remark,
+				status,
+				allow_all_comment,
+				avatar_large,
+				avatar_hd,
+				verified_reason,
+				follow_me,
+				online_status,
+				bi_followers_count,
+				lang
+				) 
+			VALUES (
+				#{userId,jdbcType=VARCHAR},
+				#{idstr,jdbcType=VARCHAR},
+				#{screen_name,jdbcType=VARCHAR},
+				#{name,jdbcType=VARCHAR},
+				#{province,jdbcType=TINYINT},
+				#{city,jdbcType=TINYINT},
+				#{location,jdbcType=VARCHAR},
+				#{description,jdbcType=VARCHAR},
+				#{url,jdbcType=VARCHAR},
+				#{profile_image_url,jdbcType=VARCHAR},
+				#{profile_url,jdbcType=VARCHAR},
+				#{domain,jdbcType=VARCHAR},
+				#{weihao,jdbcType=VARCHAR},
+				#{gender,jdbcType=VARCHAR},
+				#{followers_count,jdbcType=TINYINT},
+				#{friends_count,jdbcType=TINYINT},
+				#{statuses_count,jdbcType=TINYINT},
+				#{favourites_count,jdbcType=TINYINT},
+				#{created_at,jdbcType=VARCHAR},
+				#{following,jdbcType=VARCHAR},
+				#{allow_all_act_msg,jdbcType=VARCHAR},
+				#{geo_enabled,jdbcType=VARCHAR},
+				#{verified,jdbcType=VARCHAR},
+				#{verified_type,jdbcType=TINYINT},
+				#{remark,jdbcType=VARCHAR},
+				#{status,jdbcType=VARCHAR},
+				#{allow_all_comment,jdbcType=VARCHAR},
+				#{avatar_large,jdbcType=VARCHAR},
+				#{avatar_hd,jdbcType=VARCHAR},
+				#{verified_reason,jdbcType=VARCHAR},
+				#{follow_me,jdbcType=VARCHAR},
+				#{online_status,jdbcType=TINYINT},
+				#{bi_followers_count,jdbcType=TINYINT},
+				#{lang,jdbcType=VARCHAR}
+			)	
+			]]>
+	  </insert>
+	  
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+    PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"
+    "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+   
+<mapper namespace="com.lm.live.pay.domain.sqlmapping.WechatPayNotifyDo">
+	<resultMap type="com.lm.live.pay.domain.WechatPayNotifyDo" id="wechatPayNotifyDo">
+	    <result property="id" column="id" />
+	    <result property="userId" column="userId" />
+	    <result property="appid" column="appid" />
+	    <result property="attach" column="attach" />
+	    <result property="bankType" column="bankType" />
+	    <result property="feeType" column="feeType" />
+	    <result property="isSubscribe" column="isSubscribe" />
+	    <result property="mchId" column="mchId" />
+	    <result property="nonceStr" column="nonceStr" />
+	    <result property="openid" column="openid" />
+	    <result property="outTradeNo" column="outTradeNo" />
+	    <result property="resultCode" column="resultCode" />
+	    <result property="returnCode" column="returnCode" />
+	    <result property="sign" column="sign" />
+	    <result property="subMchId" column="subMchId" />
+	    <result property="timeEnd" column="timeEnd" />
+	    <result property="totalFee" column="totalFee" />
+	    <result property="tradeType" column="tradeType" />
+	    <result property="transactionId" column="transactionId" />
+	     <result property="recordDateTime" column="recordDateTime" />
+	    <result property="xmlData" column="xmlData" />
+	</resultMap>
+
+	<select id="getByOutTradeNo" parameterType="java.lang.String" resultMap="wechatPayNotifyDo">
+		select * from t_wechat_pay_notify where outTradeNo=#{outTradeNo}
+	</select>
+
+	  <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+		  <![CDATA[
+		  INSERT INTO t_wechat_pay_notify(
+				userId,
+				appid,
+				attach,
+				bankType,
+				feeType,
+				isSubscribe,
+				mchId,
+				nonceStr,
+				openid,
+				outTradeNo,
+				resultCode,
+				returnCode,
+				sign,
+				subMchId,
+				timeEnd,
+				totalFee,
+				tradeType,
+				transactionId,
+				recordDateTime,
+				xmlData
+				) VALUES (
+				#{userId,jdbcType=VARCHAR},
+				#{appid,jdbcType=VARCHAR},
+				#{attach,jdbcType=VARCHAR},
+				#{bankType,jdbcType=VARCHAR},
+				#{feeType,jdbcType=VARCHAR},
+				#{isSubscribe,jdbcType=VARCHAR},
+				#{mchId,jdbcType=VARCHAR},
+				#{nonceStr,jdbcType=VARCHAR},
+				#{openid,jdbcType=VARCHAR},
+				#{outTradeNo,jdbcType=VARCHAR},
+				#{resultCode,jdbcType=VARCHAR},
+				#{returnCode,jdbcType=VARCHAR},
+				#{sign,jdbcType=VARCHAR},
+				#{subMchId,jdbcType=VARCHAR},
+				#{timeEnd,jdbcType=VARCHAR},
+				#{totalFee,jdbcType=TINYINT},
+				#{tradeType,jdbcType=VARCHAR},
+				#{transactionId,jdbcType=VARCHAR},
+				#{recordDateTime},
+				#{xmlData,jdbcType=VARCHAR}
+			)	
+			]]>
+	  </insert>
+	  
+</mapper>
